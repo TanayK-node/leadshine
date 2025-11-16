@@ -1,31 +1,43 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
+import { Link } from "react-router-dom";
 import blocksImage from "@/assets/blocks-category.jpg";
 import plushImage from "@/assets/plush-category.jpg";
 import vehiclesImage from "@/assets/vehicles-category.jpg";
 
 const categories = [
   {
-    title: "Building Blocks",
-    description: "Educational construction toys for creative minds",
+    title: "School Essentials",
+    description: "Everything your child needs for learning and school",
     image: blocksImage,
     color: "bg-toy-blue",
-    itemCount: "120+ items",
+    itemCount: "150+ items",
+    link: "/school-essentials"
   },
   {
-    title: "Plush & Soft Toys",
-    description: "Cuddly companions that spark imagination",
-    image: plushImage,
-    color: "bg-toy-pink",
-    itemCount: "85+ items",
-  },
-  {
-    title: "Vehicles & Cars",
-    description: "Rolling adventures for little drivers",
+    title: "Toys & Games",
+    description: "Fun and engaging toys for endless entertainment",
     image: vehiclesImage,
     color: "bg-toy-yellow",
-    itemCount: "95+ items",
+    itemCount: "200+ items",
+    link: "/toys-and-games"
+  },
+  {
+    title: "Accessories",
+    description: "Stylish and practical accessories for kids",
+    image: plushImage,
+    color: "bg-toy-pink",
+    itemCount: "120+ items",
+    link: "/kids-accessories"
+  },
+  {
+    title: "Art & Crafts",
+    description: "Creative supplies to inspire young artists",
+    image: blocksImage,
+    color: "bg-primary/10",
+    itemCount: "180+ items",
+    link: "/art-and-crafts"
   },
 ];
 
@@ -45,10 +57,11 @@ const CategorySection = () => {
         </div>
 
         {/* Categories grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
           {categories.map((category, index) => (
-            <div 
-              key={index} 
+            <Link 
+              key={index}
+              to={category.link}
               className="group bg-white rounded-3xl border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 overflow-hidden cursor-pointer"
             >
               <div className="relative p-4">
@@ -77,7 +90,7 @@ const CategorySection = () => {
                   <ArrowRight className="h-5 w-5 ml-2" />
                 </Button>
               </div>
-            </div>
+            </Link>
           ))}
         </div>
 

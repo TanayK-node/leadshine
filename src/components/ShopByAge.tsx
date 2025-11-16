@@ -7,11 +7,46 @@ import { supabase } from "@/integrations/supabase/client";
 const ShopByAge = () => {
   const navigate = useNavigate();
   const [ageGroups, setAgeGroups] = useState([
-    { range: "0-2 Years", description: "Infants & Toddlers", color: "bg-toy-pink/10 border-toy-pink/20", count: 0 },
-    { range: "3-5 Years", description: "Preschoolers", color: "bg-toy-blue/10 border-toy-blue/20", count: 0 },
-    { range: "6-8 Years", description: "Early School", color: "bg-toy-yellow/10 border-toy-yellow/20", count: 0 },
-    { range: "9-12 Years", description: "Middle School", color: "bg-primary/10 border-primary/20", count: 0 },
-    { range: "13+ Years", description: "Teens & Adults", color: "bg-accent/10 border-accent/20", count: 0 },
+    { 
+      range: "0-2 Years", 
+      description: "Infants & Toddlers", 
+      color: "bg-toy-pink/10 border-toy-pink/20", 
+      count: 0,
+      emoji: "🍼",
+      image: "https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=400&h=300&fit=crop"
+    },
+    { 
+      range: "3-5 Years", 
+      description: "Preschoolers", 
+      color: "bg-toy-blue/10 border-toy-blue/20", 
+      count: 0,
+      emoji: "🎨",
+      image: "https://images.unsplash.com/photo-1503454537195-1dcabb73ffb9?w=400&h=300&fit=crop"
+    },
+    { 
+      range: "6-8 Years", 
+      description: "Early School", 
+      color: "bg-toy-yellow/10 border-toy-yellow/20", 
+      count: 0,
+      emoji: "📚",
+      image: "https://images.unsplash.com/photo-1560785477-d43d2b34e0df?w=400&h=300&fit=crop"
+    },
+    { 
+      range: "9-12 Years", 
+      description: "Middle School", 
+      color: "bg-primary/10 border-primary/20", 
+      count: 0,
+      emoji: "🎮",
+      image: "https://images.unsplash.com/photo-1511512578047-dfb367046420?w=400&h=300&fit=crop"
+    },
+    { 
+      range: "13+ Years", 
+      description: "Teens & Adults", 
+      color: "bg-accent/10 border-accent/20", 
+      count: 0,
+      emoji: "🎯",
+      image: "https://images.unsplash.com/photo-1509350007205-187c66b38e85?w=400&h=300&fit=crop"
+    },
   ]);
 
   useEffect(() => {
@@ -59,22 +94,33 @@ const ShopByAge = () => {
           {ageGroups.map((group, index) => (
             <div 
               key={index} 
-              className="group bg-white rounded-3xl border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 p-6 text-center cursor-pointer"
+              className="group bg-white rounded-3xl border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 overflow-hidden cursor-pointer"
               onClick={() => handleAgeClick(group.range)}
             >
-              <div className="space-y-4">
-                <div className="text-3xl font-display font-bold text-primary group-hover:animate-pop">
+              <div className="relative p-4">
+                <img
+                  src={group.image}
+                  alt={`${group.range} - ${group.description}`}
+                  className="w-full h-40 object-cover rounded-2xl border-2 border-foreground group-hover:animate-wiggle"
+                />
+                <div className="absolute top-6 left-6 bg-accent text-accent-foreground font-bold text-2xl px-3 py-2 rounded-full border-2 border-foreground shadow-lg">
+                  {group.emoji}
+                </div>
+              </div>
+
+              <div className="px-6 pb-6">
+                <div className="text-2xl font-display font-bold text-primary mb-1">
                   {group.range}
                 </div>
-                <div className="text-sm font-display font-semibold text-foreground">
+                <div className="text-sm font-display font-semibold text-foreground mb-3">
                   {group.description}
                 </div>
                 {group.count > 0 && (
-                  <div className="text-xs font-display text-muted-foreground bg-accent/20 rounded-full py-1 px-3 inline-block border-2 border-foreground">
+                  <div className="text-xs font-display text-muted-foreground bg-accent/20 rounded-full py-1 px-3 inline-block border-2 border-foreground mb-3">
                     {group.count} {group.count === 1 ? 'product' : 'products'}
                   </div>
                 )}
-                <Button className="w-full rounded-full h-10 font-display font-bold text-sm shadow-lg hover-pop border-2 border-foreground mt-2">
+                <Button className="w-full rounded-full h-10 font-display font-bold text-sm shadow-lg hover-pop border-2 border-foreground">
                   Explore 🎈
                 </Button>
               </div>

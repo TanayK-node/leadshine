@@ -7,12 +7,14 @@ import { Star, ShoppingCart, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 const FeaturedProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
   const { addToCart } = useCart();
+  const { addToWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -60,6 +62,29 @@ const FeaturedProducts = () => {
       await addToCart(productId);
     } catch (error) {
       console.error('Error adding to cart:', error);
+    }
+  };
+
+  const handleAddToWishlist = async (productId: string, e: React.MouseEvent) => {
+    e.preventDefault();
+    e.stopPropagation();
+    
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast({
+          title: "Authentication required",
+          description: "Please login to add items to wishlist",
+          variant: "destructive",
+        });
+        navigate('/auth');
+        return;
+      }
+
+      await addToWishlist(productId);
+    } catch (error) {
+      console.error('Error adding to wishlist:', error);
     }
   };
 
@@ -125,10 +150,19 @@ const FeaturedProducts = () => {
                 
                 {/* Quick Wishlist */}
                 <Button 
-                  size="icon" 
-                  className="absolute top-16 right-6 h-10 w-10 rounded-full bg-accent hover:bg-accent/80 border-2 border-foreground shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+                  size="icon"
+                  onClick={(e) => handleAddToWishlist(product.id, e)}
+                  className={`absolute top-16 right-6 h-10 w-10 rounded-full ${
+                    isInWishlist(product.id) 
+                      ? 'bg-destructive hover:bg-destructive/80' 
+                      : 'bg-accent hover:bg-accent/80'
+                  } border-2 border-foreground shadow-lg opacity-0 group-hover:opacity-100 transition-opacity`}
                 >
-                  <Heart className="h-5 w-5 fill-white text-white" />
+                  <Heart className={`h-5 w-5 ${
+                    isInWishlist(product.id) 
+                      ? 'fill-white text-white' 
+                      : 'text-white'
+                  }`} />
                 </Button>
               </div>
 
