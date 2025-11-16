@@ -494,6 +494,51 @@ export type Database = {
         }
         Relationships: []
       }
+      saved_addresses: {
+        Row: {
+          address: string
+          city: string
+          created_at: string
+          email: string
+          id: string
+          is_default: boolean
+          name: string
+          phone: string
+          state: string
+          updated_at: string
+          user_id: string
+          zip_code: string
+        }
+        Insert: {
+          address: string
+          city: string
+          created_at?: string
+          email: string
+          id?: string
+          is_default?: boolean
+          name: string
+          phone: string
+          state: string
+          updated_at?: string
+          user_id: string
+          zip_code: string
+        }
+        Update: {
+          address?: string
+          city?: string
+          created_at?: string
+          email?: string
+          id?: string
+          is_default?: boolean
+          name?: string
+          phone?: string
+          state?: string
+          updated_at?: string
+          user_id?: string
+          zip_code?: string
+        }
+        Relationships: []
+      }
       subbrands: {
         Row: {
           brand_id: string | null

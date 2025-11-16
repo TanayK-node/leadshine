@@ -7,6 +7,8 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { Textarea } from "@/components/ui/textarea";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Checkbox } from "@/components/ui/checkbox";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { useCart } from "@/contexts/CartContext";
@@ -40,6 +42,11 @@ const Checkout = () => {
   const [couponLoading, setCouponLoading] = useState(false);
   const [discount, setDiscount] = useState(0);
   
+  // Saved addresses state
+  const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
+  const [selectedAddressId, setSelectedAddressId] = useState<string>("");
+  const [saveAddress, setSaveAddress] = useState(false);
+  
   const [formData, setFormData] = useState<CheckoutFormData>({
     fullName: "",
     email: "",
@@ -65,10 +72,45 @@ const Checkout = () => {
         setUser(session.user);
         // Pre-fill email from user profile
         setFormData(prev => ({ ...prev, email: session.user.email || "" }));
+        // Fetch saved addresses
+        fetchSavedAddresses(session.user.id);
       }
     };
     checkAuth();
   }, [navigate, toast]);
+
+  const fetchSavedAddresses = async (userId: string) => {
+    try {
+      const { data, error } = await supabase
+        .from('saved_addresses')
+        .select('*')
+        .eq('user_id', userId)
+        .order('is_default', { ascending: false })
+        .order('created_at', { ascending: false });
+
+      if (error) throw error;
+      setSavedAddresses(data || []);
+    } catch (error: any) {
+      console.error('Error fetching saved addresses:', error);
+    }
+  };
+
+  const handleAddressSelect = (addressId: string) => {
+    setSelectedAddressId(addressId);
+    const address = savedAddresses.find(a => a.id === addressId);
+    if (address) {
+      setFormData({
+        fullName: address.name,
+        email: address.email,
+        phone: address.phone,
+        address: address.address,
+        city: address.city,
+        state: address.state,
+        pincode: address.zip_code,
+        notes: formData.notes,
+      });
+    }
+  };
 
   const subtotal = cartItems.reduce((sum, item) => {
     const product = item.products;
@@ -346,6 +388,33 @@ const Checkout = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Checkout Form */}
             <div className="lg:col-span-2 space-y-6">
+              {/* Saved Addresses */}
+              {savedAddresses.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Saved Addresses</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <Label htmlFor="savedAddress">Select a saved address</Label>
+                      <Select value={selectedAddressId} onValueChange={handleAddressSelect}>
+                        <SelectTrigger id="savedAddress">
+                          <SelectValue placeholder="Choose from saved addresses" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="new">Enter new address</SelectItem>
+                          {savedAddresses.map((addr) => (
+                            <SelectItem key={addr.id} value={addr.id}>
+                              {addr.name} - {addr.address}, {addr.city}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
               {/* Contact Information */}
               <Card>
                 <CardHeader>
@@ -457,6 +526,23 @@ const Checkout = () => {
                       rows={3}
                     />
                   </div>
+                  
+                  {/* Save Address Checkbox */}
+                  {!selectedAddressId && (
+                    <div className="flex items-center space-x-2 pt-2">
+                      <Checkbox 
+                        id="saveAddress" 
+                        checked={saveAddress}
+                        onCheckedChange={(checked) => setSaveAddress(checked as boolean)}
+                      />
+                      <Label 
+                        htmlFor="saveAddress" 
+                        className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
+                      >
+                        Save this address for future orders
+                      </Label>
+                    </div>
+                  )}
                 </CardContent>
               </Card>
             </div>
