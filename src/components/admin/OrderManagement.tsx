@@ -5,9 +5,12 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Input } from "@/components/ui/input";
-import { Search, Package } from "lucide-react";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Separator } from "@/components/ui/separator";
+import { Search, Package, Eye, FileDown } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import * as XLSX from 'xlsx';
 
 interface OrderItem {
   id: string;
@@ -24,9 +27,25 @@ interface Order {
   order_number: string;
   status: string;
   total_amount: number;
+  shipping_amount: number;
+  discount_amount: number;
   created_at: string;
   user_id: string;
   order_items: OrderItem[];
+}
+
+interface OrderDetails extends Order {
+  customer: {
+    name: string;
+    email: string;
+    phone: string;
+  } | null;
+  shipping_address: {
+    address: string;
+    city: string;
+    state: string;
+    pincode: string;
+  } | null;
 }
 
 export const OrderManagement = () => {
@@ -37,6 +56,8 @@ export const OrderManagement = () => {
   const [statusFilter, setStatusFilter] = useState("all");
   const [dateFrom, setDateFrom] = useState("");
   const [dateTo, setDateTo] = useState("");
+  const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
+  const [detailsOpen, setDetailsOpen] = useState(false);
 
   useEffect(() => {
     fetchOrders();
@@ -72,6 +93,115 @@ export const OrderManagement = () => {
     } finally {
       setLoading(false);
     }
+  };
+
+  const fetchOrderDetails = async (orderId: string) => {
+    try {
+      const { data: orderData, error: orderError } = await supabase
+        .from('orders')
+        .select(`
+          *,
+          order_items (
+            id,
+            quantity,
+            price,
+            products (
+              "Material Desc",
+              "Brand Desc",
+              "Funskool Code"
+            )
+          )
+        `)
+        .eq('id', orderId)
+        .single();
+
+      if (orderError) throw orderError;
+
+      // Fetch customer profile
+      const { data: profileData } = await supabase
+        .from('profiles')
+        .select('name, phone_number')
+        .eq('id', orderData.user_id)
+        .maybeSingle();
+
+      // Try to fetch saved address
+      const { data: addressData } = await supabase
+        .from('saved_addresses')
+        .select('*')
+        .eq('user_id', orderData.user_id)
+        .order('created_at', { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      const orderDetails: OrderDetails = {
+        ...orderData,
+        customer: {
+          name: addressData?.name || profileData?.name || 'N/A',
+          email: addressData?.email || 'N/A',
+          phone: addressData?.phone || profileData?.phone_number || 'N/A',
+        },
+        shipping_address: addressData ? {
+          address: addressData.address,
+          city: addressData.city,
+          state: addressData.state,
+          pincode: addressData.zip_code,
+        } : null,
+      };
+
+      setSelectedOrder(orderDetails);
+      setDetailsOpen(true);
+    } catch (error) {
+      console.error('Error fetching order details:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load order details",
+        variant: "destructive",
+      });
+    }
+  };
+
+  const exportOrderToExcel = (order: OrderDetails) => {
+    const exportData = order.order_items.map((item) => ({
+      'Order Number': order.order_number,
+      'Date': formatDate(order.created_at),
+      'Status': order.status,
+      'Customer Name': order.customer?.name || 'N/A',
+      'Customer Email': order.customer?.email || 'N/A',
+      'Customer Phone': order.customer?.phone || 'N/A',
+      'Shipping Address': order.shipping_address 
+        ? `${order.shipping_address.address}, ${order.shipping_address.city}, ${order.shipping_address.state} - ${order.shipping_address.pincode}`
+        : 'N/A',
+      'Product Code': item.products?.["Funskool Code"] || 'N/A',
+      'Product Name': item.products?.["Material Desc"] || 'N/A',
+      'Brand': item.products?.["Brand Desc"] || 'N/A',
+      'Quantity': item.quantity,
+      'Unit Price': `₹${item.price.toFixed(2)}`,
+      'Line Total': `₹${(item.price * item.quantity).toFixed(2)}`,
+      'Subtotal': `₹${order.total_amount.toFixed(2)}`,
+      'Shipping': `₹${(order.shipping_amount || 0).toFixed(2)}`,
+      'Discount': `₹${(order.discount_amount || 0).toFixed(2)}`,
+      'Total Amount': `₹${order.total_amount.toFixed(2)}`,
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'Order Details');
+    
+    // Auto-size columns
+    const maxWidth = exportData.reduce((w, r) => Math.max(w, r['Product Name'].length), 10);
+    ws['!cols'] = [
+      { wch: 20 }, { wch: 18 }, { wch: 12 }, { wch: 20 }, { wch: 25 },
+      { wch: 15 }, { wch: 40 }, { wch: 15 }, { wch: maxWidth }, { wch: 15 },
+      { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 12 }, { wch: 12 },
+      { wch: 12 }, { wch: 12 }
+    ];
+
+    XLSX.writeFile(wb, `Order_${order.order_number}.xlsx`);
+    
+    toast({
+      title: "Success",
+      description: "Order exported to Excel successfully",
+    });
   };
 
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
@@ -246,21 +376,31 @@ export const OrderManagement = () => {
                     </Badge>
                   </TableCell>
                   <TableCell>
-                    <Select
-                      value={order.status}
-                      onValueChange={(value) => handleStatusUpdate(order.id, value)}
-                    >
-                      <SelectTrigger className="w-32">
-                        <SelectValue />
-                      </SelectTrigger>
-                      <SelectContent className="bg-popover">
-                        <SelectItem value="pending">Pending</SelectItem>
-                        <SelectItem value="processing">Processing</SelectItem>
-                        <SelectItem value="shipped">Shipped</SelectItem>
-                        <SelectItem value="delivered">Delivered</SelectItem>
-                        <SelectItem value="cancelled">Cancelled</SelectItem>
-                      </SelectContent>
-                    </Select>
+                    <div className="flex gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => fetchOrderDetails(order.id)}
+                      >
+                        <Eye className="h-4 w-4 mr-1" />
+                        View
+                      </Button>
+                      <Select
+                        value={order.status}
+                        onValueChange={(value) => handleStatusUpdate(order.id, value)}
+                      >
+                        <SelectTrigger className="w-32">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent className="bg-popover">
+                          <SelectItem value="pending">Pending</SelectItem>
+                          <SelectItem value="processing">Processing</SelectItem>
+                          <SelectItem value="shipped">Shipped</SelectItem>
+                          <SelectItem value="delivered">Delivered</SelectItem>
+                          <SelectItem value="cancelled">Cancelled</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </TableCell>
                 </TableRow>
               ))}
@@ -275,6 +415,159 @@ export const OrderManagement = () => {
           </div>
         )}
       </CardContent>
+
+      {/* Order Details Dialog */}
+      <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+          <DialogHeader>
+            <DialogTitle className="flex items-center justify-between">
+              <span>Order Details - {selectedOrder?.order_number}</span>
+              {selectedOrder && (
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => exportOrderToExcel(selectedOrder)}
+                >
+                  <FileDown className="h-4 w-4 mr-2" />
+                  Export to Excel
+                </Button>
+              )}
+            </DialogTitle>
+            <DialogDescription>
+              Complete order information and customer details
+            </DialogDescription>
+          </DialogHeader>
+
+          {selectedOrder && (
+            <div className="space-y-6">
+              {/* Order Information */}
+              <div>
+                <h3 className="font-semibold text-lg mb-3">Order Information</h3>
+                <div className="grid grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Order Number:</span>
+                    <p className="font-medium">{selectedOrder.order_number}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Order Date:</span>
+                    <p className="font-medium">{formatDate(selectedOrder.created_at)}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Status:</span>
+                    <Badge className={getStatusColor(selectedOrder.status)}>
+                      {selectedOrder.status.charAt(0).toUpperCase() + selectedOrder.status.slice(1)}
+                    </Badge>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Total Amount:</span>
+                    <p className="font-medium text-lg">₹{selectedOrder.total_amount.toFixed(2)}</p>
+                  </div>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Customer Information */}
+              <div>
+                <h3 className="font-semibold text-lg mb-3">Customer Information</h3>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
+                  <div>
+                    <span className="text-muted-foreground">Name:</span>
+                    <p className="font-medium">{selectedOrder.customer?.name || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Email:</span>
+                    <p className="font-medium">{selectedOrder.customer?.email || 'N/A'}</p>
+                  </div>
+                  <div>
+                    <span className="text-muted-foreground">Phone:</span>
+                    <p className="font-medium">{selectedOrder.customer?.phone || 'N/A'}</p>
+                  </div>
+                </div>
+              </div>
+
+              {selectedOrder.shipping_address && (
+                <>
+                  <Separator />
+                  <div>
+                    <h3 className="font-semibold text-lg mb-3">Shipping Address</h3>
+                    <div className="text-sm">
+                      <p>{selectedOrder.shipping_address.address}</p>
+                      <p>{selectedOrder.shipping_address.city}, {selectedOrder.shipping_address.state}</p>
+                      <p>PIN: {selectedOrder.shipping_address.pincode}</p>
+                    </div>
+                  </div>
+                </>
+              )}
+
+              <Separator />
+
+              {/* Order Items */}
+              <div>
+                <h3 className="font-semibold text-lg mb-3">Order Items</h3>
+                <div className="border rounded-lg overflow-hidden">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead>Product</TableHead>
+                        <TableHead>Brand</TableHead>
+                        <TableHead className="text-right">Quantity</TableHead>
+                        <TableHead className="text-right">Price</TableHead>
+                        <TableHead className="text-right">Total</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {selectedOrder.order_items.map((item) => (
+                        <TableRow key={item.id}>
+                          <TableCell className="font-medium">
+                            {item.products?.["Material Desc"] || 'N/A'}
+                          </TableCell>
+                          <TableCell>{item.products?.["Brand Desc"] || 'N/A'}</TableCell>
+                          <TableCell className="text-right">{item.quantity}</TableCell>
+                          <TableCell className="text-right">₹{item.price.toFixed(2)}</TableCell>
+                          <TableCell className="text-right font-medium">
+                            ₹{(item.price * item.quantity).toFixed(2)}
+                          </TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+
+              <Separator />
+
+              {/* Order Summary */}
+              <div>
+                <h3 className="font-semibold text-lg mb-3">Order Summary</h3>
+                <div className="space-y-2 text-sm">
+                  <div className="flex justify-between">
+                    <span>Subtotal:</span>
+                    <span>₹{selectedOrder.total_amount.toFixed(2)}</span>
+                  </div>
+                  {selectedOrder.shipping_amount > 0 && (
+                    <div className="flex justify-between">
+                      <span>Shipping:</span>
+                      <span>₹{selectedOrder.shipping_amount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  {selectedOrder.discount_amount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount:</span>
+                      <span>-₹{selectedOrder.discount_amount.toFixed(2)}</span>
+                    </div>
+                  )}
+                  <Separator />
+                  <div className="flex justify-between font-bold text-lg">
+                    <span>Total:</span>
+                    <span>₹{selectedOrder.total_amount.toFixed(2)}</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          )}
+        </DialogContent>
+      </Dialog>
     </Card>
   );
 };
