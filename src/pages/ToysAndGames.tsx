@@ -17,7 +17,7 @@ const ToysAndGames = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { addToCart, isInCart } = useCart();
 
   const handleAddToCart = async (productId: string) => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -203,10 +203,23 @@ const ToysAndGames = () => {
                   </div>
 
                   {/* Add to Cart Button */}
-                  <Button className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground" onClick={() => handleAddToCart(product.id)}>
-                    <ShoppingCart className="h-5 w-5 mr-2" />
-                    Add to Cart 🛒
-                  </Button>
+                  {isInCart(product.id) ? (
+                    <Button 
+                      className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground" 
+                      onClick={() => navigate('/cart')}
+                      variant="secondary"
+                    >
+                      Go to Cart 🛒
+                    </Button>
+                  ) : (
+                    <Button 
+                      className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground" 
+                      onClick={() => handleAddToCart(product.id)}
+                    >
+                      <ShoppingCart className="h-5 w-5 mr-2" />
+                      Add to Cart 🛒
+                    </Button>
+                  )}
                 </div>
               </div>
             ))}

@@ -17,7 +17,7 @@ const SchoolEssentials = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { addToCart, isInCart } = useCart();
 
   const handleAddToCart = async (productId: string) => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -175,10 +175,25 @@ const SchoolEssentials = () => {
                         Stock: {product.QTY}
                       </span>
                     </div>
-                    <Button className="w-full mt-3" size="sm" onClick={() => handleAddToCart(product.id)}>
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add to Cart
-                    </Button>
+                    {isInCart(product.id) ? (
+                      <Button 
+                        className="w-full mt-3" 
+                        size="sm" 
+                        onClick={() => navigate('/cart')}
+                        variant="secondary"
+                      >
+                        Go to Cart 🛒
+                      </Button>
+                    ) : (
+                      <Button 
+                        className="w-full mt-3" 
+                        size="sm" 
+                        onClick={() => handleAddToCart(product.id)}
+                      >
+                        <ShoppingCart className="h-4 w-4 mr-2" />
+                        Add to Cart
+                      </Button>
+                    )}
                   </div>
                 </CardContent>
               </Card>

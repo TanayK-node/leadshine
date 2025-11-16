@@ -13,7 +13,7 @@ const FeaturedProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { addToCart, isInCart } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
 
@@ -205,13 +205,23 @@ const FeaturedProducts = () => {
                 </div>
 
                 {/* Add to Cart Button */}
-                <Button 
-                  onClick={() => handleAddToCart(product.id)}
-                  className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground"
-                >
-                  <ShoppingCart className="h-5 w-5 mr-2" />
-                  Add to Cart 🛒
-                </Button>
+                {isInCart(product.id) ? (
+                  <Button 
+                    onClick={() => navigate('/cart')}
+                    variant="secondary"
+                    className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground"
+                  >
+                    Go to Cart 🛒
+                  </Button>
+                ) : (
+                  <Button 
+                    onClick={() => handleAddToCart(product.id)}
+                    className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground"
+                  >
+                    <ShoppingCart className="h-5 w-5 mr-2" />
+                    Add to Cart 🛒
+                  </Button>
+                )}
               </div>
             </div>
           ))}
