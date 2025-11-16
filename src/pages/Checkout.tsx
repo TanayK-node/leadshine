@@ -415,33 +415,6 @@ const Checkout = () => {
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
             {/* Checkout Form */}
             <div className="lg:col-span-2 space-y-6">
-              {/* Saved Addresses */}
-              {savedAddresses.length > 0 && (
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Saved Addresses</CardTitle>
-                  </CardHeader>
-                  <CardContent>
-                    <div className="space-y-2">
-                      <Label htmlFor="savedAddress">Select a saved address</Label>
-                      <Select value={selectedAddressId} onValueChange={handleAddressSelect}>
-                        <SelectTrigger id="savedAddress">
-                          <SelectValue placeholder="Choose from saved addresses" />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="new">Enter new address</SelectItem>
-                          {savedAddresses.map((addr) => (
-                            <SelectItem key={addr.id} value={addr.id}>
-                              {addr.name} - {addr.address}, {addr.city}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
-
               {/* Contact Information */}
               <Card>
                 <CardHeader>
@@ -574,8 +547,36 @@ const Checkout = () => {
               </Card>
             </div>
 
-            {/* Order Summary */}
-            <div className="lg:col-span-1">
+            {/* Order Summary and Saved Addresses */}
+            <div className="lg:col-span-1 space-y-6">
+              {/* Saved Addresses */}
+              {savedAddresses.length > 0 && (
+                <Card>
+                  <CardHeader>
+                    <CardTitle>Saved Addresses</CardTitle>
+                  </CardHeader>
+                  <CardContent>
+                    <div className="space-y-2">
+                      <Label htmlFor="savedAddress">Select a saved address</Label>
+                      <Select value={selectedAddressId} onValueChange={handleAddressSelect}>
+                        <SelectTrigger id="savedAddress">
+                          <SelectValue placeholder="Choose from saved addresses" />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="new">Enter new address</SelectItem>
+                          {savedAddresses.map((addr) => (
+                            <SelectItem key={addr.id} value={addr.id}>
+                              {addr.name} - {addr.address}, {addr.city}
+                            </SelectItem>
+                          ))}
+                        </SelectContent>
+                      </Select>
+                    </div>
+                  </CardContent>
+                </Card>
+              )}
+
+              {/* Order Summary */}
               <Card className="sticky top-4">
                 <CardHeader>
                   <CardTitle>Order Summary</CardTitle>
