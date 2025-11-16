@@ -21,7 +21,7 @@ const ShopAllProducts = () => {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { addToCart, isInCart } = useCart();
   const [products, setProducts] = useState<Product[]>([]);
   const [filteredProducts, setFilteredProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
@@ -314,14 +314,25 @@ const ShopAllProducts = () => {
                   </div>
 
                   {/* Add to Cart Button */}
-                  <Button 
-                    className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground" 
-                    onClick={() => handleAddToCart(product.id)}
-                    disabled={!product.QTY || product.QTY === 0}
-                  >
-                    <ShoppingCart className="h-5 w-5 mr-2" />
-                    {!product.QTY || product.QTY === 0 ? "Out of Stock 🚫" : "Add to Cart 🛒"}
-                  </Button>
+                  {isInCart(product.id) ? (
+                    <Button 
+                      className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground" 
+                      onClick={() => navigate('/cart')}
+                      variant="secondary"
+                      disabled={!product.QTY || product.QTY === 0}
+                    >
+                      Go to Cart 🛒
+                    </Button>
+                  ) : (
+                    <Button 
+                      className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground" 
+                      onClick={() => handleAddToCart(product.id)}
+                      disabled={!product.QTY || product.QTY === 0}
+                    >
+                      <ShoppingCart className="h-5 w-5 mr-2" />
+                      {!product.QTY || product.QTY === 0 ? "Out of Stock 🚫" : "Add to Cart 🛒"}
+                    </Button>
+                  )}
                 </div>
               </div>
             ) : (

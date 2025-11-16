@@ -22,7 +22,7 @@ const ProductDetail = () => {
   const { id } = useParams();
   const navigate = useNavigate();
   const { toast } = useToast();
-  const { addToCart: addToCartContext } = useCart();
+  const { addToCart: addToCartContext, isInCart } = useCart();
   const { addToWishlist: addToWishlistContext, removeFromWishlist, isInWishlist } = useWishlist();
   const [product, setProduct] = useState<Product | null>(null);
   const [loading, setLoading] = useState(true);
@@ -373,15 +373,26 @@ const ProductDetail = () => {
 
             {/* Action Buttons */}
             <div className="flex flex-col sm:flex-row gap-3 md:gap-4">
-              <Button 
-                className="flex-1" 
-                size="lg"
-                onClick={addToCart}
-                disabled={!product.QTY || product.QTY === 0}
-              >
-                <ShoppingCart className="h-4 w-4 mr-2" />
-                Add to Cart
-              </Button>
+              {isInCart(id || '') ? (
+                <Button 
+                  className="flex-1" 
+                  size="lg"
+                  onClick={() => navigate('/cart')}
+                  variant="secondary"
+                >
+                  Go to Cart 🛒
+                </Button>
+              ) : (
+                <Button 
+                  className="flex-1" 
+                  size="lg"
+                  onClick={addToCart}
+                  disabled={!product.QTY || product.QTY === 0}
+                >
+                  <ShoppingCart className="h-4 w-4 mr-2" />
+                  Add to Cart
+                </Button>
+              )}
               <div className="flex gap-3">
                 <Button 
                   variant={isInWishlist(id || '') ? "default" : "outline"} 
