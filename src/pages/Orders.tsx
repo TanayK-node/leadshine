@@ -261,6 +261,19 @@ const Orders = () => {
                         <span>₹{order.total_amount.toFixed(2)}</span>
                       </div>
                     </div>
+
+                    {/* Refund Button for Delivered Orders */}
+                    {order.status === 'delivered' && (
+                      <div className="mt-4 pt-4 border-t">
+                        <Button 
+                          variant="outline" 
+                          onClick={() => navigate('/refund-policy')}
+                          className="w-full"
+                        >
+                          Request Refund
+                        </Button>
+                      </div>
+                    )}
                   </div>
                 </CardContent>
               </Card>
