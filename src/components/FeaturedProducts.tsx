@@ -1,16 +1,19 @@
 import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Star, ShoppingCart, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { useCart } from "@/contexts/CartContext";
 
 const FeaturedProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { addToCart } = useCart();
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchProducts();
@@ -37,6 +40,26 @@ const FeaturedProducts = () => {
       });
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleAddToCart = async (productId: string) => {
+    try {
+      const { data: { session } } = await supabase.auth.getSession();
+      
+      if (!session) {
+        toast({
+          title: "Authentication required",
+          description: "Please login to add items to cart",
+          variant: "destructive",
+        });
+        navigate('/auth');
+        return;
+      }
+
+      await addToCart(productId);
+    } catch (error) {
+      console.error('Error adding to cart:', error);
     }
   };
 
@@ -148,7 +171,10 @@ const FeaturedProducts = () => {
                 </div>
 
                 {/* Add to Cart Button */}
-                <Button className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground">
+                <Button 
+                  onClick={() => handleAddToCart(product.id)}
+                  className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground"
+                >
                   <ShoppingCart className="h-5 w-5 mr-2" />
                   Add to Cart 🛒
                 </Button>
