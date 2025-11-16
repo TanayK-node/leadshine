@@ -264,11 +264,12 @@ const Orders = () => {
 
                     {/* Refund Button for Delivered Orders */}
                     {order.status === 'delivered' && (
-                      <div className="mt-4 pt-4 border-t">
+                      <div className="mt-4 pt-4 border-t flex justify-end">
                         <Button 
-                          variant="outline" 
+                          variant="ghost" 
+                          size="sm"
                           onClick={() => navigate('/refund-policy')}
-                          className="w-full"
+                          className="text-xs text-muted-foreground hover:text-foreground"
                         >
                           Request Refund
                         </Button>
