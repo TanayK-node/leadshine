@@ -31,6 +31,13 @@ interface Order {
   discount_amount: number;
   created_at: string;
   user_id: string;
+  customer_name: string | null;
+  customer_email: string | null;
+  customer_phone: string | null;
+  shipping_address: string | null;
+  shipping_city: string | null;
+  shipping_state: string | null;
+  shipping_pincode: string | null;
   order_items: OrderItem[];
 }
 
@@ -123,6 +130,67 @@ export const OrderManagement = () => {
         variant: "destructive",
       });
     }
+  };
+
+  const exportAllOrdersToExcel = () => {
+    if (filteredOrders.length === 0) {
+      toast({
+        title: "No orders to export",
+        description: "Apply filters to see orders",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    const exportData: any[] = [];
+    
+    filteredOrders.forEach((order) => {
+      order.order_items.forEach((item) => {
+        const shippingAddress = order.shipping_address && order.shipping_city && order.shipping_state && order.shipping_pincode
+          ? `${order.shipping_address}, ${order.shipping_city}, ${order.shipping_state} - ${order.shipping_pincode}`
+          : 'N/A';
+
+        exportData.push({
+          'Order Number': order.order_number,
+          'Date': formatDate(order.created_at),
+          'Status': order.status,
+          'Customer Name': order.customer_name || 'N/A',
+          'Customer Email': order.customer_email || 'N/A',
+          'Customer Phone': order.customer_phone || 'N/A',
+          'Shipping Address': shippingAddress,
+          'Product Code': item.products?.["Funskool Code"] || 'N/A',
+          'Product Name': item.products?.["Material Desc"] || 'N/A',
+          'Brand': item.products?.["Brand Desc"] || 'N/A',
+          'Quantity': item.quantity,
+          'Unit Price': `₹${item.price.toFixed(2)}`,
+          'Line Total': `₹${(item.price * item.quantity).toFixed(2)}`,
+          'Shipping Amount': `₹${(order.shipping_amount || 0).toFixed(2)}`,
+          'Discount Amount': `₹${(order.discount_amount || 0).toFixed(2)}`,
+          'Order Total': `₹${order.total_amount.toFixed(2)}`,
+        });
+      });
+    });
+
+    const ws = XLSX.utils.json_to_sheet(exportData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, 'All Orders');
+    
+    // Auto-size columns
+    const maxWidth = 50;
+    ws['!cols'] = [
+      { wch: 20 }, { wch: 18 }, { wch: 12 }, { wch: 20 }, { wch: 25 },
+      { wch: 15 }, { wch: 50 }, { wch: 15 }, { wch: 30 }, { wch: 15 },
+      { wch: 10 }, { wch: 12 }, { wch: 12 }, { wch: 15 }, { wch: 15 },
+      { wch: 12 }
+    ];
+
+    const fileName = `All_Orders_${new Date().toISOString().split('T')[0]}.xlsx`;
+    XLSX.writeFile(wb, fileName);
+    
+    toast({
+      title: "Success",
+      description: `Exported ${filteredOrders.length} orders to Excel`,
+    });
   };
 
   const exportOrderToExcel = (order: OrderDetails) => {
@@ -256,6 +324,10 @@ export const OrderManagement = () => {
             <CardTitle className="text-2xl">Order Management</CardTitle>
             <CardDescription>View and manage all customer orders</CardDescription>
           </div>
+          <Button onClick={exportAllOrdersToExcel} variant="default">
+            <FileDown className="h-4 w-4 mr-2" />
+            Export All Orders
+          </Button>
         </div>
       </CardHeader>
       <CardContent>
@@ -387,19 +459,7 @@ export const OrderManagement = () => {
       <Dialog open={detailsOpen} onOpenChange={setDetailsOpen}>
         <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle className="flex items-center justify-between">
-              <span>Order Details - {selectedOrder?.order_number}</span>
-              {selectedOrder && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => exportOrderToExcel(selectedOrder)}
-                >
-                  <FileDown className="h-4 w-4 mr-2" />
-                  Export to Excel
-                </Button>
-              )}
-            </DialogTitle>
+            <DialogTitle>Order Details - {selectedOrder?.order_number}</DialogTitle>
             <DialogDescription>
               Complete order information and customer details
             </DialogDescription>
