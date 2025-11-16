@@ -302,6 +302,26 @@ const Checkout = () => {
         if (stockError) throw stockError;
       }
 
+      // Save address if checkbox is checked and it's a new address
+      if (saveAddress && !selectedAddressId) {
+        try {
+          await supabase.from('saved_addresses').insert({
+            user_id: user.id,
+            name: validated.fullName,
+            email: validated.email,
+            phone: validated.phone,
+            address: validated.address,
+            city: validated.city,
+            state: validated.state,
+            zip_code: validated.pincode,
+            is_default: savedAddresses.length === 0 // First address becomes default
+          });
+        } catch (error) {
+          console.error('Failed to save address:', error);
+          // Don't block order if address save fails
+        }
+      }
+
       // Update coupon usage if applied
       if (appliedCoupon) {
         const { error: couponError } = await supabase
