@@ -18,6 +18,7 @@ interface CartContextType {
   removeFromCart: (itemId: string) => Promise<void>;
   refreshCart: () => Promise<void>;
   clearCart: () => Promise<void>;
+  isInCart: (productId: string) => boolean;
 }
 
 const CartContext = createContext<CartContextType | undefined>(undefined);
@@ -196,6 +197,10 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
     }
   };
 
+  const isInCart = (productId: string): boolean => {
+    return cartItems.some(item => item.product_id === productId);
+  };
+
   const cartCount = cartItems.reduce((total, item) => total + item.quantity, 0);
 
   return (
@@ -209,6 +214,7 @@ export const CartProvider = ({ children }: { children: ReactNode }) => {
         removeFromCart,
         refreshCart,
         clearCart,
+        isInCart,
       }}
     >
       {children}
