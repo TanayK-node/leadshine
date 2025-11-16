@@ -203,12 +203,14 @@ const Cart = () => {
                   Proceed to Checkout
                 </Button>
 
-                <Link to="/">
-                  <Button variant="outline" className="w-full">
-                    <ArrowLeft className="h-4 w-4 mr-2" />
-                    Continue Shopping
-                  </Button>
-                </Link>
+                <div className="mt-4">
+                  <Link to="/">
+                    <Button variant="outline" className="w-full">
+                      <ArrowLeft className="h-4 w-4 mr-2" />
+                      Continue Shopping
+                    </Button>
+                  </Link>
+                </div>
               </CardContent>
             </Card>
           </div>
