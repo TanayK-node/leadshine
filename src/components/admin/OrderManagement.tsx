@@ -35,17 +35,13 @@ interface Order {
 }
 
 interface OrderDetails extends Order {
-  customer: {
-    name: string;
-    email: string;
-    phone: string;
-  } | null;
-  shipping_address: {
-    address: string;
-    city: string;
-    state: string;
-    pincode: string;
-  } | null;
+  customer_name: string | null;
+  customer_email: string | null;
+  customer_phone: string | null;
+  shipping_address: string | null;
+  shipping_city: string | null;
+  shipping_state: string | null;
+  shipping_pincode: string | null;
 }
 
 export const OrderManagement = () => {
@@ -117,38 +113,7 @@ export const OrderManagement = () => {
 
       if (orderError) throw orderError;
 
-      // Fetch customer profile
-      const { data: profileData } = await supabase
-        .from('profiles')
-        .select('name, phone_number')
-        .eq('id', orderData.user_id)
-        .maybeSingle();
-
-      // Try to fetch saved address
-      const { data: addressData } = await supabase
-        .from('saved_addresses')
-        .select('*')
-        .eq('user_id', orderData.user_id)
-        .order('created_at', { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      const orderDetails: OrderDetails = {
-        ...orderData,
-        customer: {
-          name: addressData?.name || profileData?.name || 'N/A',
-          email: addressData?.email || 'N/A',
-          phone: addressData?.phone || profileData?.phone_number || 'N/A',
-        },
-        shipping_address: addressData ? {
-          address: addressData.address,
-          city: addressData.city,
-          state: addressData.state,
-          pincode: addressData.zip_code,
-        } : null,
-      };
-
-      setSelectedOrder(orderDetails);
+      setSelectedOrder(orderData as OrderDetails);
       setDetailsOpen(true);
     } catch (error) {
       console.error('Error fetching order details:', error);
@@ -161,16 +126,18 @@ export const OrderManagement = () => {
   };
 
   const exportOrderToExcel = (order: OrderDetails) => {
+    const shippingAddress = order.shipping_address && order.shipping_city && order.shipping_state && order.shipping_pincode
+      ? `${order.shipping_address}, ${order.shipping_city}, ${order.shipping_state} - ${order.shipping_pincode}`
+      : 'N/A';
+
     const exportData = order.order_items.map((item) => ({
       'Order Number': order.order_number,
       'Date': formatDate(order.created_at),
       'Status': order.status,
-      'Customer Name': order.customer?.name || 'N/A',
-      'Customer Email': order.customer?.email || 'N/A',
-      'Customer Phone': order.customer?.phone || 'N/A',
-      'Shipping Address': order.shipping_address 
-        ? `${order.shipping_address.address}, ${order.shipping_address.city}, ${order.shipping_address.state} - ${order.shipping_address.pincode}`
-        : 'N/A',
+      'Customer Name': order.customer_name || 'N/A',
+      'Customer Email': order.customer_email || 'N/A',
+      'Customer Phone': order.customer_phone || 'N/A',
+      'Shipping Address': shippingAddress,
       'Product Code': item.products?.["Funskool Code"] || 'N/A',
       'Product Name': item.products?.["Material Desc"] || 'N/A',
       'Brand': item.products?.["Brand Desc"] || 'N/A',
@@ -473,15 +440,15 @@ export const OrderManagement = () => {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-sm">
                   <div>
                     <span className="text-muted-foreground">Name:</span>
-                    <p className="font-medium">{selectedOrder.customer?.name || 'N/A'}</p>
+                    <p className="font-medium">{selectedOrder.customer_name || 'N/A'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Email:</span>
-                    <p className="font-medium">{selectedOrder.customer?.email || 'N/A'}</p>
+                    <p className="font-medium">{selectedOrder.customer_email || 'N/A'}</p>
                   </div>
                   <div>
                     <span className="text-muted-foreground">Phone:</span>
-                    <p className="font-medium">{selectedOrder.customer?.phone || 'N/A'}</p>
+                    <p className="font-medium">{selectedOrder.customer_phone || 'N/A'}</p>
                   </div>
                 </div>
               </div>
@@ -492,9 +459,9 @@ export const OrderManagement = () => {
                   <div>
                     <h3 className="font-semibold text-lg mb-3">Shipping Address</h3>
                     <div className="text-sm">
-                      <p>{selectedOrder.shipping_address.address}</p>
-                      <p>{selectedOrder.shipping_address.city}, {selectedOrder.shipping_address.state}</p>
-                      <p>PIN: {selectedOrder.shipping_address.pincode}</p>
+                      <p>{selectedOrder.shipping_address}</p>
+                      <p>{selectedOrder.shipping_city}, {selectedOrder.shipping_state}</p>
+                      <p>PIN: {selectedOrder.shipping_pincode}</p>
                     </div>
                   </div>
                 </>

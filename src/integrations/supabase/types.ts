@@ -269,10 +269,17 @@ export type Database = {
         Row: {
           coupon_id: string | null
           created_at: string
+          customer_email: string | null
+          customer_name: string | null
+          customer_phone: string | null
           discount_amount: number | null
           id: string
           order_number: string
+          shipping_address: string | null
           shipping_amount: number | null
+          shipping_city: string | null
+          shipping_pincode: string | null
+          shipping_state: string | null
           status: string
           total_amount: number
           updated_at: string
@@ -281,10 +288,17 @@ export type Database = {
         Insert: {
           coupon_id?: string | null
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           discount_amount?: number | null
           id?: string
           order_number: string
+          shipping_address?: string | null
           shipping_amount?: number | null
+          shipping_city?: string | null
+          shipping_pincode?: string | null
+          shipping_state?: string | null
           status?: string
           total_amount: number
           updated_at?: string
@@ -293,10 +307,17 @@ export type Database = {
         Update: {
           coupon_id?: string | null
           created_at?: string
+          customer_email?: string | null
+          customer_name?: string | null
+          customer_phone?: string | null
           discount_amount?: number | null
           id?: string
           order_number?: string
+          shipping_address?: string | null
           shipping_amount?: number | null
+          shipping_city?: string | null
+          shipping_pincode?: string | null
+          shipping_state?: string | null
           status?: string
           total_amount?: number
           updated_at?: string

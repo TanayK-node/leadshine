@@ -246,7 +246,7 @@ const Checkout = () => {
       // Generate order number
       const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`;
 
-      // Create order
+      // Create order with shipping address
       const { data: order, error: orderError } = await supabase
         .from('orders')
         .insert({
@@ -256,7 +256,14 @@ const Checkout = () => {
           shipping_amount: shipping,
           status: 'pending',
           coupon_id: appliedCoupon?.id || null,
-          discount_amount: discount
+          discount_amount: discount,
+          customer_name: validated.fullName,
+          customer_email: validated.email,
+          customer_phone: validated.phone,
+          shipping_address: validated.address,
+          shipping_city: validated.city,
+          shipping_state: validated.state,
+          shipping_pincode: validated.pincode
         })
         .select()
         .single();
