@@ -70,8 +70,22 @@ const Checkout = () => {
         navigate("/auth");
       } else {
         setUser(session.user);
-        // Pre-fill email from user profile
-        setFormData(prev => ({ ...prev, email: session.user.email || "" }));
+        
+        // Fetch user profile to get name
+        const { data: profile } = await supabase
+          .from('profiles')
+          .select('name, phone_number')
+          .eq('id', session.user.id)
+          .single();
+        
+        // Pre-fill form data from user profile
+        setFormData(prev => ({ 
+          ...prev, 
+          email: session.user.email || "",
+          fullName: profile?.name || "",
+          phone: profile?.phone_number || ""
+        }));
+        
         // Fetch saved addresses
         fetchSavedAddresses(session.user.id);
       }
