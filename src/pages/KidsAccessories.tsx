@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import { Search, Filter, ShoppingCart, Heart, Shirt } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Link, useNavigate } from "react-router-dom";
 import Header from "@/components/Header";
@@ -10,6 +9,7 @@ import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
+import { useWishlist } from "@/contexts/WishlistContext";
 
 const KidsAccessories = () => {
   const navigate = useNavigate();
@@ -17,7 +17,8 @@ const KidsAccessories = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
-  const { addToCart } = useCart();
+  const { addToCart, isInCart } = useCart();
+  const { addToWishlist, isInWishlist } = useWishlist();
 
   const handleAddToCart = async (productId: string) => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -126,63 +127,119 @@ const KidsAccessories = () => {
         ) : filteredProducts.length === 0 ? (
           <div className="text-center py-12">No products found</div>
         ) : (
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-            {filteredProducts.map((product) => (
-              <Card key={product.id} className="group hover:shadow-lg transition-shadow">
-                <CardContent className="p-0">
-                  <div className="relative overflow-hidden rounded-t-lg">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+            {filteredProducts.map((product) => {
+              const inCart = isInCart(product.id);
+              const inWishlist = isInWishlist(product.id);
+
+              return (
+                <div 
+                  key={product.id} 
+                  className="group bg-white rounded-3xl border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 overflow-hidden"
+                >
+                  <div className="relative p-4">
                     <Link to={`/product/${product.id}`}>
                       {product.product_images && product.product_images.length > 0 ? (
                         <img
                           src={product.product_images[0].image_url}
                           alt={product["Material Desc"] || "Product"}
-                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                          className="w-full h-52 object-cover rounded-2xl border-2 border-foreground group-hover:animate-wiggle"
                         />
                       ) : (
-                        <div className="w-full h-48 bg-muted flex items-center justify-center">
-                          <span className="text-muted-foreground">No Image</span>
+                        <div className="w-full h-52 bg-muted rounded-2xl border-2 border-foreground flex items-center justify-center">
+                          <span className="text-muted-foreground font-display">No Image</span>
                         </div>
                       )}
                     </Link>
-                    <Badge className="absolute top-2 right-2 bg-accent">STYLE</Badge>
-                    <div className="absolute top-2 left-2 flex flex-col gap-2 opacity-0 group-hover:opacity-100 transition-opacity">
-                      <Button size="sm" variant="secondary" className="h-8 w-8 p-0">
-                        <Heart className="h-4 w-4" />
-                      </Button>
-                    </div>
+                    
+                    {/* Badges */}
+                    <Badge className="absolute top-6 left-6 bg-accent text-accent-foreground font-bold text-xs px-3 py-1 shadow-lg border-2 border-foreground">
+                      ✨ Accessories
+                    </Badge>
+                    
+                    {product.QTY && product.QTY <= 3 && product.QTY > 0 && (
+                      <Badge className="absolute top-6 right-6 bg-secondary text-secondary-foreground font-bold text-xs px-3 py-1 shadow-lg border-2 border-foreground">
+                        🔥 Low Stock
+                      </Badge>
+                    )}
+                    
+                    {/* Quick Wishlist */}
+                    <Button 
+                      size="icon"
+                      onClick={() => addToWishlist(product.id)}
+                      className={`absolute bottom-6 right-6 h-10 w-10 rounded-full ${
+                        inWishlist 
+                          ? 'bg-destructive hover:bg-destructive/80' 
+                          : 'bg-accent hover:bg-accent/80'
+                      } border-2 border-foreground shadow-lg opacity-0 group-hover:opacity-100 transition-opacity`}
+                    >
+                      <Heart className={`h-5 w-5 ${
+                        inWishlist 
+                          ? 'fill-white text-white' 
+                          : 'text-white'
+                      }`} />
+                    </Button>
                   </div>
-                  
-                  <div className="p-4">
+
+                  <div className="px-6 pb-6">
+                    <div className="text-xs font-bold text-muted-foreground mb-1 font-display uppercase">
+                      {product["Brand Desc"]} {product.SubBrand && `• ${product.SubBrand}`}
+                    </div>
+                    
                     <Link to={`/product/${product.id}`}>
-                      <h3 className="font-semibold text-foreground group-hover:text-primary transition-colors cursor-pointer">
+                      <h3 className="font-display font-bold text-foreground text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                         {product["Material Desc"]}
                       </h3>
                     </Link>
-                    <p className="text-sm text-muted-foreground mb-2">
-                      {product["Brand Desc"]} {product.SubBrand && `• ${product.SubBrand}`}
-                    </p>
-                    <p className="text-xs text-muted-foreground mb-2">
-                      SKU: {product["Funskool Code"]}
-                    </p>
+                    
                     {product.age_range && (
-                      <p className="text-xs text-muted-foreground mb-2">Age: {product.age_range}</p>
+                      <Badge variant="outline" className="text-xs mb-3 font-display border-2">
+                        Age: {product.age_range}
+                      </Badge>
                     )}
-                    <div className="flex items-center justify-between">
-                      <span className="text-lg font-bold text-primary">
-                        ₹{product["MRP (INR)"]}
-                      </span>
-                      <span className="text-sm text-muted-foreground">
-                        Stock: {product.QTY}
-                      </span>
+                    
+                    {/* Price */}
+                    <div className="flex items-center gap-2 mb-4 flex-wrap">
+                      {product.discount_price ? (
+                        <>
+                          <span className="text-base font-display text-muted-foreground line-through">
+                            ₹{product["MRP (INR)"]}
+                          </span>
+                          <span className="text-2xl font-display font-bold text-primary">
+                            ₹{product.discount_price}
+                          </span>
+                          <Badge className="bg-destructive text-destructive-foreground font-bold text-xs border-2 border-foreground">
+                            {Math.round((1 - product.discount_price / product["MRP (INR)"]) * 100)}% OFF
+                          </Badge>
+                        </>
+                      ) : (
+                        <span className="text-2xl font-display font-bold text-primary">
+                          ₹{product["MRP (INR)"]}
+                        </span>
+                      )}
                     </div>
-                    <Button className="w-full mt-3" size="sm" onClick={() => handleAddToCart(product.id)}>
-                      <ShoppingCart className="h-4 w-4 mr-2" />
-                      Add to Cart
-                    </Button>
+
+                    {/* Add to Cart Button */}
+                    {inCart ? (
+                      <Button 
+                        onClick={() => navigate('/cart')}
+                        className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground"
+                      >
+                        Go to Cart 🛒
+                      </Button>
+                    ) : (
+                      <Button 
+                        onClick={() => handleAddToCart(product.id)}
+                        className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground"
+                      >
+                        <ShoppingCart className="h-5 w-5 mr-2" />
+                        Add to Cart
+                      </Button>
+                    )}
                   </div>
-                </CardContent>
-              </Card>
-            ))}
+                </div>
+              );
+            })}
           </div>
         )}
       </main>
