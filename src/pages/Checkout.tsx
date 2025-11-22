@@ -16,6 +16,13 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { z } from "zod";
 
+// Razorpay types
+declare global {
+  interface Window {
+    Razorpay: any;
+  }
+}
+
 const checkoutSchema = z.object({
   fullName: z.string().min(1, "Full name is required").max(100),
   email: z.string().email("Invalid email address"),
@@ -57,6 +64,7 @@ const Checkout = () => {
     pincode: "",
     notes: "",
   });
+  const [razorpayKeyId, setRazorpayKeyId] = useState<string>("");
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -91,6 +99,31 @@ const Checkout = () => {
       }
     };
     checkAuth();
+
+    // Load Razorpay script
+    const script = document.createElement('script');
+    script.src = 'https://checkout.razorpay.com/v1/checkout.js';
+    script.async = true;
+    document.body.appendChild(script);
+
+    // Fetch Razorpay Key ID
+    const fetchRazorpayConfig = async () => {
+      try {
+        const { data, error } = await supabase.functions.invoke('razorpay-config');
+        if (!error && data?.key_id) {
+          setRazorpayKeyId(data.key_id);
+        }
+      } catch (error) {
+        console.error('Failed to fetch Razorpay config:', error);
+      }
+    };
+    fetchRazorpayConfig();
+
+    return () => {
+      if (document.body.contains(script)) {
+        document.body.removeChild(script);
+      }
+    };
   }, [navigate, toast]);
 
   const fetchSavedAddresses = async (userId: string) => {
@@ -284,93 +317,97 @@ const Checkout = () => {
 
       if (orderError) throw orderError;
 
-      // Create order items
-      const orderItems = cartItems.map(item => {
-        const product = item.products;
-        const price = product?.discount_price || product?.["MRP (INR)"] || 0;
-        return {
-          order_id: order.id,
-          product_id: item.product_id,
-          quantity: item.quantity,
-          price: price,
-        };
+      // Create Razorpay order via edge function
+      const { data: { session } } = await supabase.auth.getSession();
+      const { data: razorpayOrder, error: razorpayError } = await supabase.functions.invoke('razorpay-create-order', {
+        body: {
+          amount: total,
+          currency: 'INR',
+          receipt: orderNumber,
+          notes: {
+            order_id: order.id,
+            order_number: orderNumber,
+          }
+        },
+        headers: {
+          Authorization: `Bearer ${session?.access_token}`
+        }
       });
 
-      const { error: itemsError } = await supabase
-        .from('order_items')
-        .insert(orderItems);
+      if (razorpayError || !razorpayOrder) {
+        throw new Error('Failed to create payment order');
+      }
 
-      if (itemsError) throw itemsError;
+      // Initialize Razorpay
+      const options = {
+        key: razorpayKeyId,
+        amount: razorpayOrder.amount,
+        currency: razorpayOrder.currency,
+        name: 'Leadshine',
+        description: `Order #${orderNumber}`,
+        order_id: razorpayOrder.order_id,
+        prefill: {
+          name: validated.fullName,
+          email: validated.email,
+          contact: validated.phone,
+        },
+        theme: {
+          color: '#3b82f6',
+        },
+        handler: async function (response: any) {
+          try {
+            // Verify payment via edge function
+            const { data: verifyResult, error: verifyError } = await supabase.functions.invoke('razorpay-verify-payment', {
+              body: {
+                razorpay_order_id: response.razorpay_order_id,
+                razorpay_payment_id: response.razorpay_payment_id,
+                razorpay_signature: response.razorpay_signature,
+                order_id: order.id,
+                cart_items: cartItems,
+                coupon_id: appliedCoupon?.id,
+                discount_amount: discount,
+                save_address: saveAddress && !selectedAddressId,
+                address_data: saveAddress && !selectedAddressId ? validated : null,
+              },
+              headers: {
+                Authorization: `Bearer ${session?.access_token}`
+              }
+            });
 
-      // Update product stock quantities
-      for (const item of cartItems) {
-        const product = item.products;
-        if (!product) continue;
+            if (verifyError || !verifyResult?.success) {
+              throw new Error('Payment verification failed');
+            }
 
-        const currentStock = product.QTY || 0;
-        const newStock = currentStock - item.quantity;
+            toast({
+              title: "Payment successful!",
+              description: `Your order ${orderNumber} has been placed successfully`,
+            });
 
-        // Check if sufficient stock is available
-        if (newStock < 0) {
-          throw new Error(`Insufficient stock for ${product["Material Desc"]}. Available: ${currentStock}, Requested: ${item.quantity}`);
+            // Redirect to orders page
+            navigate('/orders');
+          } catch (error: any) {
+            console.error('Payment verification error:', error);
+            toast({
+              title: "Payment verification failed",
+              description: error.message || "Please contact support",
+              variant: "destructive",
+            });
+          }
+        },
+        modal: {
+          ondismiss: function() {
+            setSubmitting(false);
+            toast({
+              title: "Payment cancelled",
+              description: "You cancelled the payment. Your order is still pending.",
+              variant: "destructive",
+            });
+          }
         }
+      };
 
-        const { error: stockError } = await supabase
-          .from('products')
-          .update({ QTY: newStock })
-          .eq('id', item.product_id);
-
-        if (stockError) throw stockError;
-      }
-
-      // Save address if checkbox is checked and it's a new address
-      if (saveAddress && !selectedAddressId) {
-        try {
-          await supabase.from('saved_addresses').insert({
-            user_id: user.id,
-            name: validated.fullName,
-            email: validated.email,
-            phone: validated.phone,
-            address: validated.address,
-            city: validated.city,
-            state: validated.state,
-            zip_code: validated.pincode,
-            is_default: savedAddresses.length === 0 // First address becomes default
-          });
-        } catch (error) {
-          console.error('Failed to save address:', error);
-          // Don't block order if address save fails
-        }
-      }
-
-      // Update coupon usage if applied
-      if (appliedCoupon) {
-        const { error: couponError } = await supabase
-          .from('coupons')
-          .update({ current_uses: appliedCoupon.current_uses + 1 })
-          .eq('id', appliedCoupon.id);
-
-        if (couponError) console.error('Failed to update coupon usage:', couponError);
-
-        // Record coupon usage
-        await supabase.from('coupon_usage').insert({
-          coupon_id: appliedCoupon.id,
-          user_id: user.id,
-          order_id: order.id,
-          discount_amount: discount
-        });
-      }
-
-      // Clear cart
-      await clearCart();
-
-      toast({
-        title: "Order placed successfully!",
-        description: `Your order number is ${orderNumber}`,
-      });
-
-      // Redirect to orders page
-      navigate('/orders');
+      const razorpay = new window.Razorpay(options);
+      razorpay.open();
     } catch (error: any) {
       console.error('Checkout error:', error);
       toast({
@@ -378,7 +415,6 @@ const Checkout = () => {
         description: error.message || "Failed to place order. Please try again.",
         variant: "destructive",
       });
-    } finally {
       setSubmitting(false);
     }
   };
@@ -689,7 +725,7 @@ const Checkout = () => {
                     size="lg"
                     disabled={submitting}
                   >
-                    {submitting ? "Placing Order..." : "Place Order"}
+                    {submitting ? "Processing..." : "Pay with Razorpay"}
                   </Button>
 
                   <p className="text-xs text-muted-foreground text-center">
