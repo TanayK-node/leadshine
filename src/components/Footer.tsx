@@ -1,5 +1,4 @@
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
 
 const Footer = () => {
@@ -63,39 +62,23 @@ const Footer = () => {
             </ul>
           </div>
 
-          {/* Contact & Newsletter */}
+          {/* Contact Information */}
           <div className="space-y-4">
-            <h3 className="text-lg font-display font-semibold">Stay Connected</h3>
+            <h3 className="text-lg font-display font-semibold">Contact Us</h3>
             
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
                 <Phone className="h-4 w-4 text-primary" />
-                <span className="text-background/80">+1 (555) 123-4567</span>
+                <span className="text-background/80">+91 9820142014</span>
               </div>
               <div className="flex items-center space-x-3">
                 <Mail className="h-4 w-4 text-primary" />
-                <span className="text-background/80">contact@leadshine.com</span>
+                <span className="text-background/80">leadshinemarketing@gmail.com</span>
               </div>
-              <div className="flex items-center space-x-3">
-                <MapPin className="h-4 w-4 text-primary" />
-                <span className="text-background/80">123 Toy Street, Play City, PC 12345</span>
-              </div>
-            </div>
-
-            {/* Newsletter */}
-            <div className="space-y-3">
-              <p className="text-background/80 text-sm">
-                Subscribe for wholesale deals and new product updates
-              </p>
-              <div className="flex space-x-2">
-                <Input
-                  placeholder="Enter your email"
-                  className="bg-background/10 border-background/20 text-background placeholder:text-background/60"
-                />
-                <Button variant="secondary" size="sm">
-                  Subscribe
-                </Button>
+              <div className="flex items-start space-x-3">
+                <MapPin className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
+                <span className="text-background/80">46/369 motilal nagar, 1, Rd Number 10, Siddharth Nagar, Goregaon West, Mumbai, Maharashtra 400104</span>
               </div>
             </div>
           </div>
@@ -119,6 +102,9 @@ const Footer = () => {
               </a>
               <a href="/refund-policy" className="text-background/60 hover:text-background transition-colors">
                 Refund Policy
+              </a>
+              <a href="/shipping-policy" className="text-background/60 hover:text-background transition-colors">
+                Shipping Policy
               </a>
             </div>
           </div>
