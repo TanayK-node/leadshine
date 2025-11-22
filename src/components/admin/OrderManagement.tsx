@@ -241,12 +241,38 @@ export const OrderManagement = () => {
 
   const handleStatusUpdate = async (orderId: string, newStatus: string) => {
     try {
+      // Get order details before updating
+      const order = orders.find(o => o.id === orderId);
+      
       const { error } = await supabase
         .from('orders')
         .update({ status: newStatus })
         .eq('id', orderId);
 
       if (error) throw error;
+
+      // Send email notification if status is changed to delivered
+      if (newStatus === 'delivered' && order) {
+        try {
+          const productNames = order.order_items.map(item => 
+            item.products?.["Material Desc"] || "Product"
+          );
+
+          await supabase.functions.invoke('send-delivery-notification', {
+            body: {
+              customerEmail: order.customer_email,
+              customerName: order.customer_name || 'Valued Customer',
+              orderNumber: order.order_number,
+              productNames: productNames,
+            }
+          });
+
+          console.log('Delivery notification email sent');
+        } catch (emailError) {
+          console.error('Failed to send delivery notification:', emailError);
+          // Don't fail the status update if email fails
+        }
+      }
 
       toast({
         title: "Success",
