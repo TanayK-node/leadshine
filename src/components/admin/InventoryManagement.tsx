@@ -93,6 +93,27 @@ export const InventoryManagement = () => {
     const productId = productToDelete.id;
 
     try {
+      // Check if product is in any orders (cannot delete if so - preserves order history)
+      const { data: orderItems, error: orderCheckError } = await supabase
+        .from('order_items')
+        .select('id')
+        .eq('product_id', productId)
+        .limit(1);
+
+      if (orderCheckError) throw orderCheckError;
+
+      if (orderItems && orderItems.length > 0) {
+        toast({
+          title: "Cannot Delete Product",
+          description: "This product is referenced in existing orders and cannot be deleted. Consider setting stock to 0 to hide it from customers instead.",
+          variant: "destructive",
+        });
+        setDeleteDialogOpen(false);
+        setProductToDelete(null);
+        setIsDeleting(false);
+        return;
+      }
+
       // Delete from wishlist first (foreign key constraint)
       await supabase
         .from('wishlist')
@@ -154,7 +175,7 @@ export const InventoryManagement = () => {
       console.error("Delete error:", error);
       toast({
         title: "Error",
-        description: error?.message || "Failed to delete product. It may be referenced in existing orders.",
+        description: error?.message || "Failed to delete product",
         variant: "destructive",
       });
     } finally {
