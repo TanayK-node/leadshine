@@ -280,6 +280,7 @@ export type Database = {
           shipping_city: string | null
           shipping_pincode: string | null
           shipping_state: string | null
+          shipping_tracking_id: string | null
           status: string
           total_amount: number
           updated_at: string
@@ -299,6 +300,7 @@ export type Database = {
           shipping_city?: string | null
           shipping_pincode?: string | null
           shipping_state?: string | null
+          shipping_tracking_id?: string | null
           status?: string
           total_amount: number
           updated_at?: string
@@ -318,6 +320,7 @@ export type Database = {
           shipping_city?: string | null
           shipping_pincode?: string | null
           shipping_state?: string | null
+          shipping_tracking_id?: string | null
           status?: string
           total_amount?: number
           updated_at?: string
