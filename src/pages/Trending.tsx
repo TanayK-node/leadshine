@@ -52,6 +52,7 @@ const Trending = () => {
           *,
           product_images(image_url)
         `)
+        .eq('is_deleted', false)
         .limit(20);
 
       if (error) throw error;

@@ -42,6 +42,7 @@ export const InventoryManagement = () => {
       const { data, error } = await supabase
         .from('products')
         .select('*')
+        .eq('is_deleted', false)
         .order('Brand Desc');
 
       if (error) throw error;
@@ -93,7 +94,7 @@ export const InventoryManagement = () => {
     const productId = productToDelete.id;
 
     try {
-      // Check if product is in any orders (cannot delete if so - preserves order history)
+      // Check if product is in any orders - if yes, soft delete; if no, hard delete
       const { data: orderItems, error: orderCheckError } = await supabase
         .from('order_items')
         .select('id')
@@ -102,71 +103,80 @@ export const InventoryManagement = () => {
 
       if (orderCheckError) throw orderCheckError;
 
-      if (orderItems && orderItems.length > 0) {
-        toast({
-          title: "Cannot Delete Product",
-          description: "This product is referenced in existing orders and cannot be deleted. Consider setting stock to 0 to hide it from customers instead.",
-          variant: "destructive",
-        });
-        setDeleteDialogOpen(false);
-        setProductToDelete(null);
-        setIsDeleting(false);
-        return;
-      }
+      const hasOrders = orderItems && orderItems.length > 0;
 
-      // Delete from wishlist first (foreign key constraint)
-      await supabase
-        .from('wishlist')
-        .delete()
-        .eq('product_id', productId);
-
-      // Delete from cart_items (foreign key constraint)
+      // Delete from cart_items (remove from all user carts)
       await supabase
         .from('cart_items')
         .delete()
         .eq('product_id', productId);
 
-      // Delete product images from storage and database
-      const { data: images } = await supabase
-        .from('product_images')
-        .select('image_url')
+      // Delete from wishlist
+      await supabase
+        .from('wishlist')
+        .delete()
         .eq('product_id', productId);
 
-      if (images) {
-        for (const image of images) {
-          const fileName = image.image_url.split('/').pop();
-          if (fileName) {
-            await supabase.storage
-              .from('product-images')
-              .remove([`${productId}/${fileName}`]);
+      if (hasOrders) {
+        // Soft delete: Mark as deleted and set stock to 0 (preserves order history)
+        const { error: updateError } = await supabase
+          .from('products')
+          .update({ 
+            is_deleted: true,
+            QTY: 0 
+          })
+          .eq('id', productId);
+
+        if (updateError) throw updateError;
+
+        toast({
+          title: "Product Removed",
+          description: "Product removed from store and user access. Order history preserved.",
+        });
+      } else {
+        // Hard delete: Product not in any orders, safe to fully remove
+        // Delete product images from storage and database
+        const { data: images } = await supabase
+          .from('product_images')
+          .select('image_url')
+          .eq('product_id', productId);
+
+        if (images) {
+          for (const image of images) {
+            const fileName = image.image_url.split('/').pop();
+            if (fileName) {
+              await supabase.storage
+                .from('product-images')
+                .remove([`${productId}/${fileName}`]);
+            }
           }
         }
+
+        // Delete product images records
+        await supabase
+          .from('product_images')
+          .delete()
+          .eq('product_id', productId);
+
+        // Delete product classifications
+        await supabase
+          .from('product_classifications')
+          .delete()
+          .eq('product_id', productId);
+
+        // Delete the product
+        const { error } = await supabase
+          .from('products')
+          .delete()
+          .eq('id', productId);
+
+        if (error) throw error;
+
+        toast({
+          title: "Success",
+          description: "Product permanently deleted",
+        });
       }
-
-      // Delete product images records
-      await supabase
-        .from('product_images')
-        .delete()
-        .eq('product_id', productId);
-
-      // Delete product classifications
-      await supabase
-        .from('product_classifications')
-        .delete()
-        .eq('product_id', productId);
-
-      // Delete the product
-      const { error } = await supabase
-        .from('products')
-        .delete()
-        .eq('id', productId);
-
-      if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Product deleted successfully",
-      });
 
       setDeleteDialogOpen(false);
       setProductToDelete(null);

@@ -43,6 +43,7 @@ const ProductDetail = () => {
           .from('products')
           .select('*')
           .eq('id', id)
+          .eq('is_deleted', false)
           .single();
 
         if (error) throw error;
