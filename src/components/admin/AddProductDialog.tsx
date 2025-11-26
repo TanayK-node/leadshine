@@ -22,9 +22,9 @@ const productSchema = z.object({
   QTY: z.number().int().min(0, "Quantity must be non-negative"),
   "Elec/ Non Elec": z.string().optional(),
   age_range: z.string().optional(),
-  "Sku length": z.number().optional(),
-  "Sku Width": z.number().optional(),
-  "Sku Height": z.number().optional(),
+  "Sku length": z.number().nullable().optional(),
+  "Sku Width": z.number().nullable().optional(),
+  "Sku Height": z.number().nullable().optional(),
   "Unit of measure of SKU length Width and Height": z.string().optional(),
   description: z.string().optional(),
 });
