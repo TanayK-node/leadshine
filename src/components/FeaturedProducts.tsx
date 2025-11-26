@@ -29,6 +29,7 @@ const FeaturedProducts = () => {
           *,
           product_images(image_url)
         `)
+        .eq('is_deleted', false)
         .limit(4);
 
       if (error) throw error;

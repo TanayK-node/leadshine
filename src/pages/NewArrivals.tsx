@@ -51,6 +51,7 @@ const NewArrivals = () => {
           *,
           product_images(image_url)
         `)
+        .eq('is_deleted', false)
         .order('created_at', { ascending: false })
         .limit(8);
 

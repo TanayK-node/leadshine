@@ -68,7 +68,8 @@ const KidsAccessories = () => {
           *,
           product_images(image_url)
         `)
-        .in('id', productIds);
+        .in('id', productIds)
+        .eq('is_deleted', false);
 
       if (error) throw error;
       setProducts(data || []);

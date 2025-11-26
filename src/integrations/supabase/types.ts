@@ -414,6 +414,7 @@ export type Database = {
           "Funskool Code": string | null
           id: string
           image_url: string | null
+          is_deleted: boolean | null
           "Material Desc": string | null
           "MRP (INR)": number | null
           QTY: number | null
@@ -438,6 +439,7 @@ export type Database = {
           "Funskool Code"?: string | null
           id?: string
           image_url?: string | null
+          is_deleted?: boolean | null
           "Material Desc"?: string | null
           "MRP (INR)"?: number | null
           QTY?: number | null
@@ -462,6 +464,7 @@ export type Database = {
           "Funskool Code"?: string | null
           id?: string
           image_url?: string | null
+          is_deleted?: boolean | null
           "Material Desc"?: string | null
           "MRP (INR)"?: number | null
           QTY?: number | null
