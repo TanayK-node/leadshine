@@ -6,6 +6,7 @@ import { InventoryManagement } from "@/components/admin/InventoryManagement";
 import { CouponManagement } from "@/components/admin/CouponManagement";
 import { AdminManagement } from "@/components/admin/AdminManagement";
 import { AnnouncementBannerManagement } from "@/components/admin/AnnouncementBannerManagement";
+import { BrandManagement } from "@/components/admin/BrandManagement";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShoppingCart, Package, TrendingUp, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -164,12 +165,15 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="orders" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-5 bg-card border">
+          <TabsList className="grid w-full grid-cols-6 bg-card border">
             <TabsTrigger value="orders" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Orders
             </TabsTrigger>
             <TabsTrigger value="inventory" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Inventory
+            </TabsTrigger>
+            <TabsTrigger value="brands" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Brands
             </TabsTrigger>
             <TabsTrigger value="coupons" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Coupons
@@ -188,6 +192,10 @@ const Admin = () => {
           
           <TabsContent value="inventory">
             <InventoryManagement />
+          </TabsContent>
+
+          <TabsContent value="brands">
+            <BrandManagement />
           </TabsContent>
 
           <TabsContent value="coupons">
