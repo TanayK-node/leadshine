@@ -181,6 +181,7 @@ const SchoolEssentials = () => {
                         size="sm" 
                         onClick={() => navigate('/cart')}
                         variant="secondary"
+                        disabled={!product.QTY || product.QTY === 0}
                       >
                         Go to Cart 🛒
                       </Button>
@@ -189,9 +190,10 @@ const SchoolEssentials = () => {
                         className="w-full mt-3" 
                         size="sm" 
                         onClick={() => handleAddToCart(product.id)}
+                        disabled={!product.QTY || product.QTY === 0}
                       >
                         <ShoppingCart className="h-4 w-4 mr-2" />
-                        Add to Cart
+                        {!product.QTY || product.QTY === 0 ? "Out of Stock" : "Add to Cart"}
                       </Button>
                     )}
                   </div>

@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { Minus, Plus, Trash2, ShoppingBag, ArrowLeft } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
 import { Separator } from "@/components/ui/separator";
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
@@ -31,6 +32,9 @@ const Cart = () => {
   
   const shipping = subtotal > 500 ? 0 : 50;
   const total = subtotal + shipping;
+
+  // Check if any items are out of stock
+  const hasOutOfStock = cartItems.some(item => !item.products?.QTY || item.products.QTY === 0);
 
   if (loading) {
     return (
@@ -113,6 +117,9 @@ const Cart = () => {
                           <p className="text-xs text-muted-foreground">
                             SKU: {product["Funskool Code"]}
                           </p>
+                          {(!product.QTY || product.QTY === 0) && (
+                            <Badge variant="destructive" className="mt-1">⚠️ Out of Stock</Badge>
+                          )}
                           {product.discount_price ? (
                             <div className="flex items-center gap-2 mt-1 md:mt-2">
                               <span className="text-base md:text-lg font-bold text-primary">
@@ -199,7 +206,18 @@ const Cart = () => {
 
                 <Separator />
 
-                <Button className="w-full" size="lg" onClick={() => navigate('/checkout')}>
+                {hasOutOfStock && (
+                  <div className="text-sm text-destructive text-center">
+                    ⚠️ Some items in your cart are out of stock. Please remove them to continue.
+                  </div>
+                )}
+
+                <Button 
+                  className="w-full" 
+                  size="lg" 
+                  onClick={() => navigate('/checkout')}
+                  disabled={hasOutOfStock}
+                >
                   Proceed to Checkout
                 </Button>
 

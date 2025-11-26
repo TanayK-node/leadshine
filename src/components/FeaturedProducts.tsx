@@ -210,6 +210,7 @@ const FeaturedProducts = () => {
                     onClick={() => navigate('/cart')}
                     variant="secondary"
                     className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground"
+                    disabled={!product.QTY || product.QTY === 0}
                   >
                     Go to Cart 🛒
                   </Button>
@@ -217,9 +218,10 @@ const FeaturedProducts = () => {
                   <Button 
                     onClick={() => handleAddToCart(product.id)}
                     className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground"
+                    disabled={!product.QTY || product.QTY === 0}
                   >
                     <ShoppingCart className="h-5 w-5 mr-2" />
-                    Add to Cart 🛒
+                    {!product.QTY || product.QTY === 0 ? "Out of Stock 🚫" : "Add to Cart 🛒"}
                   </Button>
                 )}
               </div>
