@@ -61,6 +61,9 @@ export const OrderManagement = () => {
   const [dateTo, setDateTo] = useState("");
   const [selectedOrder, setSelectedOrder] = useState<OrderDetails | null>(null);
   const [detailsOpen, setDetailsOpen] = useState(false);
+  const [shippingIdDialogOpen, setShippingIdDialogOpen] = useState(false);
+  const [shippingId, setShippingId] = useState("");
+  const [pendingOrderId, setPendingOrderId] = useState<string | null>(null);
 
   useEffect(() => {
     fetchOrders();
@@ -239,20 +242,52 @@ export const OrderManagement = () => {
     });
   };
 
-  const handleStatusUpdate = async (orderId: string, newStatus: string) => {
+  const handleStatusChange = (orderId: string, newStatus: string) => {
+    if (newStatus === 'out for delivery') {
+      setPendingOrderId(orderId);
+      setShippingIdDialogOpen(true);
+    } else {
+      handleStatusUpdate(orderId, newStatus, null);
+    }
+  };
+
+  const handleShippingIdSubmit = () => {
+    if (!shippingId.trim()) {
+      toast({
+        title: "Error",
+        description: "Please enter a shipping ID",
+        variant: "destructive",
+      });
+      return;
+    }
+    
+    if (pendingOrderId) {
+      handleStatusUpdate(pendingOrderId, 'out for delivery', shippingId);
+      setShippingIdDialogOpen(false);
+      setShippingId("");
+      setPendingOrderId(null);
+    }
+  };
+
+  const handleStatusUpdate = async (orderId: string, newStatus: string, trackingId: string | null) => {
     try {
       // Get order details before updating
       const order = orders.find(o => o.id === orderId);
       
+      const updateData: any = { status: newStatus };
+      if (trackingId) {
+        updateData.shipping_tracking_id = trackingId;
+      }
+
       const { error } = await supabase
         .from('orders')
-        .update({ status: newStatus })
+        .update(updateData)
         .eq('id', orderId);
 
       if (error) throw error;
 
-      // Send email notification if status is changed to delivered
-      if (newStatus === 'delivered' && order) {
+      // Send email notification if status is changed to out for delivery
+      if (newStatus === 'out for delivery' && order && trackingId) {
         try {
           const productNames = order.order_items.map(item => 
             item.products?.["Material Desc"] || "Product"
@@ -264,6 +299,7 @@ export const OrderManagement = () => {
               customerName: order.customer_name || 'Valued Customer',
               orderNumber: order.order_number,
               productNames: productNames,
+              shippingId: trackingId,
             }
           });
 
@@ -307,12 +343,8 @@ export const OrderManagement = () => {
     switch (status) {
       case 'pending':
         return "bg-yellow-100 text-yellow-800 border-yellow-200";
-      case 'processing':
+      case 'out for delivery':
         return "bg-blue-100 text-blue-800 border-blue-200";
-      case 'shipped':
-        return "bg-purple-100 text-purple-800 border-purple-200";
-      case 'delivered':
-        return "bg-green-100 text-green-800 border-green-200";
       case 'cancelled':
         return "bg-red-100 text-red-800 border-red-200";
       default:
@@ -378,9 +410,7 @@ export const OrderManagement = () => {
                 <SelectContent className="bg-popover">
                   <SelectItem value="all">All Statuses</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
-                  <SelectItem value="processing">Processing</SelectItem>
-                  <SelectItem value="shipped">Shipped</SelectItem>
-                  <SelectItem value="delivered">Delivered</SelectItem>
+                  <SelectItem value="out for delivery">Out for Delivery</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
@@ -452,16 +482,14 @@ export const OrderManagement = () => {
                       </Button>
                       <Select
                         value={order.status}
-                        onValueChange={(value) => handleStatusUpdate(order.id, value)}
+                        onValueChange={(value) => handleStatusChange(order.id, value)}
                       >
-                        <SelectTrigger className="w-32">
+                        <SelectTrigger className="w-40">
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent className="bg-popover">
                           <SelectItem value="pending">Pending</SelectItem>
-                          <SelectItem value="processing">Processing</SelectItem>
-                          <SelectItem value="shipped">Shipped</SelectItem>
-                          <SelectItem value="delivered">Delivered</SelectItem>
+                          <SelectItem value="out for delivery">Out for Delivery</SelectItem>
                           <SelectItem value="cancelled">Cancelled</SelectItem>
                         </SelectContent>
                       </Select>
@@ -619,6 +647,47 @@ export const OrderManagement = () => {
               </div>
             </div>
           )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Shipping ID Dialog */}
+      <Dialog open={shippingIdDialogOpen} onOpenChange={setShippingIdDialogOpen}>
+        <DialogContent>
+          <DialogHeader>
+            <DialogTitle>Enter Shipping ID</DialogTitle>
+            <DialogDescription>
+              Please enter the shipping tracking ID for this order
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4">
+            <div>
+              <Input
+                placeholder="Enter shipping ID"
+                value={shippingId}
+                onChange={(e) => setShippingId(e.target.value)}
+                onKeyDown={(e) => {
+                  if (e.key === 'Enter') {
+                    handleShippingIdSubmit();
+                  }
+                }}
+              />
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button
+                variant="outline"
+                onClick={() => {
+                  setShippingIdDialogOpen(false);
+                  setShippingId("");
+                  setPendingOrderId(null);
+                }}
+              >
+                Cancel
+              </Button>
+              <Button onClick={handleShippingIdSubmit}>
+                Confirm & Send Email
+              </Button>
+            </div>
+          </div>
         </DialogContent>
       </Dialog>
     </Card>

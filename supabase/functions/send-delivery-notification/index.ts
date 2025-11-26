@@ -12,6 +12,7 @@ interface DeliveryNotificationRequest {
   customerName: string;
   orderNumber: string;
   productNames: string[];
+  shippingId: string;
 }
 
 const handler = async (req: Request): Promise<Response> => {
@@ -20,7 +21,7 @@ const handler = async (req: Request): Promise<Response> => {
   }
 
   try {
-    const { customerEmail, customerName, orderNumber, productNames }: DeliveryNotificationRequest = await req.json();
+    const { customerEmail, customerName, orderNumber, productNames, shippingId }: DeliveryNotificationRequest = await req.json();
 
     console.log("Sending delivery notification to:", customerEmail);
 
@@ -72,6 +73,7 @@ const handler = async (req: Request): Promise<Response> => {
                   <div class="order-info">
                     <h3>Order Details:</h3>
                     <p><strong>Order Number:</strong> ${orderNumber}</p>
+                    <p><strong>Shipping ID:</strong> ${shippingId}</p>
                     <p><strong>Products:</strong> ${productList}</p>
                   </div>
                   
