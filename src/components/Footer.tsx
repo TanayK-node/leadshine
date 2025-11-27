@@ -4,108 +4,95 @@ import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from "luci
 const Footer = () => {
   return (
     <footer className="bg-foreground text-background">
-      <div className="container mx-auto px-4 py-16">
+      <div className="container mx-auto px-4 py-12 sm:py-16">
         {/* Main footer content */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8 sm:gap-10 mb-8 sm:mb-12">
           {/* Company Info */}
           <div className="space-y-4">
             <div className="flex items-center space-x-2">
               <div className="bg-gradient-primary rounded-xl p-2">
-                <span className="text-primary-foreground font-display font-bold text-xl">
+                <span className="text-primary-foreground font-display font-bold text-lg sm:text-xl">
                   Leadshine
                 </span>
               </div>
             </div>
-            <p className="text-background/80 leading-relaxed">
+            <p className="text-background/80 leading-relaxed text-sm sm:text-base">
               Your trusted partner for premium wholesale toys. We provide safe, 
               educational, and fun toys for retailers and educators worldwide.
             </p>
             <div className="flex space-x-3">
-              <Button size="icon" variant="ghost" className="text-background hover:bg-background/10">
-                <Facebook className="h-5 w-5" />
+              <Button size="icon" variant="ghost" className="text-background hover:bg-background/10 h-9 w-9 sm:h-10 sm:w-10">
+                <Facebook className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
-              <Button size="icon" variant="ghost" className="text-background hover:bg-background/10">
-                <Instagram className="h-5 w-5" />
+              <Button size="icon" variant="ghost" className="text-background hover:bg-background/10 h-9 w-9 sm:h-10 sm:w-10">
+                <Instagram className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
-              <Button size="icon" variant="ghost" className="text-background hover:bg-background/10">
-                <Twitter className="h-5 w-5" />
+              <Button size="icon" variant="ghost" className="text-background hover:bg-background/10 h-9 w-9 sm:h-10 sm:w-10">
+                <Twitter className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
-              <Button size="icon" variant="ghost" className="text-background hover:bg-background/10">
-                <Youtube className="h-5 w-5" />
+              <Button size="icon" variant="ghost" className="text-background hover:bg-background/10 h-9 w-9 sm:h-10 sm:w-10">
+                <Youtube className="h-4 w-4 sm:h-5 sm:w-5" />
               </Button>
             </div>
           </div>
 
-          {/* Quick Links */}
-          {/* <div className="space-y-4">
-            <h3 className="text-lg font-display font-semibold">Quick Links</h3>
-            <ul className="space-y-2">
-              <li><a href="#" className="text-background/80 hover:text-background transition-colors">About Us</a></li>
-              <li><a href="#" className="text-background/80 hover:text-background transition-colors">Wholesale Pricing</a></li>
-              <li><a href="#" className="text-background/80 hover:text-background transition-colors">Bulk Orders</a></li>
-              <li><a href="#" className="text-background/80 hover:text-background transition-colors">Become a Retailer</a></li>
-              <li><a href="#" className="text-background/80 hover:text-background transition-colors">Safety Standards</a></li>
-              <li><a href="#" className="text-background/80 hover:text-background transition-colors">Quality Assurance</a></li>
-            </ul>
-          </div> */}
-
           {/* Categories */}
           <div className="space-y-4">
-            <h3 className="text-lg font-display font-semibold">Shop</h3>
+            <h3 className="text-base sm:text-lg font-display font-semibold">Shop</h3>
             <ul className="space-y-2">
-              <li><a href="/shop-all" className="text-background/80 hover:text-background transition-colors">Shop All Products</a></li>
-              <li><a href="/new-arrivals" className="text-background/80 hover:text-background transition-colors">New Arrivals</a></li>
-              <li><a href="/trending" className="text-background/80 hover:text-background transition-colors">Trending</a></li>
-              <li><a href="/school-essentials" className="text-background/80 hover:text-background transition-colors">School Essentials</a></li>
-              <li><a href="/toys-and-games" className="text-background/80 hover:text-background transition-colors">Toys & Games</a></li>
-              <li><a href="/kids-accessories" className="text-background/80 hover:text-background transition-colors">Kids Accessories</a></li>
-              <li><a href="/art-and-crafts" className="text-background/80 hover:text-background transition-colors">Art & Crafts</a></li>
+              <li><a href="/shop-all" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">Shop All Products</a></li>
+              <li><a href="/new-arrivals" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">New Arrivals</a></li>
+              <li><a href="/trending" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">Trending</a></li>
+              <li><a href="/school-essentials" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">School Essentials</a></li>
+              <li><a href="/toys-and-games" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">Toys & Games</a></li>
+              <li><a href="/kids-accessories" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">Kids Accessories</a></li>
+              <li><a href="/art-and-crafts" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">Art & Crafts</a></li>
             </ul>
           </div>
 
           {/* Contact Information */}
-          <div className="space-y-4">
-            <h3 className="text-lg font-display font-semibold">Contact Us</h3>
+          <div className="space-y-4 sm:col-span-2 lg:col-span-2">
+            <h3 className="text-base sm:text-lg font-display font-semibold">Contact Us</h3>
             
             {/* Contact Info */}
             <div className="space-y-3">
               <div className="flex items-center space-x-3">
-                <Phone className="h-4 w-4 text-primary" />
-                <span className="text-background/80">+91 9820142014</span>
+                <Phone className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-background/80 text-sm sm:text-base">+91 9820142014</span>
               </div>
               <div className="flex items-center space-x-3">
-                <Mail className="h-4 w-4 text-primary" />
-                <span className="text-background/80">leadshinemarketing@gmail.com</span>
+                <Mail className="h-4 w-4 text-primary flex-shrink-0" />
+                <span className="text-background/80 text-sm sm:text-base break-all">leadshinemarketing@gmail.com</span>
               </div>
               <div className="flex items-start space-x-3">
                 <MapPin className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
-                <span className="text-background/80">46/369 motilal nagar, 1, Rd Number 10, Siddharth Nagar, Goregaon West, Mumbai, Maharashtra 400104</span>
+                <span className="text-background/80 text-sm sm:text-base">46/369 motilal nagar, 1, Rd Number 10, Siddharth Nagar, Goregaon West, Mumbai, Maharashtra 400104</span>
               </div>
             </div>
           </div>
         </div>
 
         {/* Bottom section */}
-        <div className="pt-8 border-t border-background/20">
+        <div className="pt-6 sm:pt-8 border-t border-background/20">
           <div className="flex flex-col md:flex-row justify-between items-center space-y-4 md:space-y-0">
-            <div className="text-background/60 text-sm">
+            <div className="text-background/60 text-xs sm:text-sm text-center md:text-left">
               © 2024 Leadshine. All rights reserved.
             </div>
-            <div className="flex space-x-6 text-sm">
+            <div className="flex flex-wrap justify-center gap-3 sm:gap-6 text-xs sm:text-sm">
               <a href="/about-us" className="text-background/60 hover:text-background transition-colors">
                 About Us
               </a>
               <a href="/privacy-policy" className="text-background/60 hover:text-background transition-colors">
-                Privacy Policy
+                Privacy
               </a>
               <a href="/terms-of-service" className="text-background/60 hover:text-background transition-colors">
-                Terms of Service
+                Terms
               </a>
               <a href="/refund-policy" className="text-background/60 hover:text-background transition-colors">
-                Refund Policy
+                Refund
               </a>
               <a href="/shipping-policy" className="text-background/60 hover:text-background transition-colors">
-                Shipping Policy
+                Shipping
               </a>
             </div>
           </div>
