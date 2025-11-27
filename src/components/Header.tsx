@@ -214,32 +214,35 @@ const Header = () => {
           {/* Right actions */}
           <div className="flex items-center space-x-1 md:space-x-2">
             {/* Mobile Search Button */}
-            <Popover open={searchOpen} onOpenChange={setSearchOpen}>
-              <PopoverTrigger asChild>
+            <Sheet open={searchOpen} onOpenChange={setSearchOpen}>
+              <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden hover-pop">
                   <Search className="h-5 w-5" />
                 </Button>
-              </PopoverTrigger>
-              <PopoverContent className="w-[calc(100vw-2rem)] md:w-[400px] p-4 border-2 border-foreground shadow-sticker rounded-3xl" align="end">
-                <div className="space-y-4">
+              </SheetTrigger>
+              <SheetContent side="top" className="h-auto max-h-[90vh] overflow-y-auto">
+                <div className="space-y-4 pt-6">
+                  <h3 className="text-lg font-display font-bold mb-4">Search Products</h3>
+                  
                   <div>
-                    <label className="text-sm font-display font-bold mb-2 block">Search Products</label>
+                    <label className="text-sm font-display font-bold mb-2 block">Product Name</label>
                     <Input
                       placeholder="Enter product name, brand..."
                       value={searchTerm}
                       onChange={(e) => setSearchTerm(e.target.value)}
                       onKeyDown={(e) => e.key === "Enter" && handleSearch()}
                       className="border-2 border-foreground rounded-2xl font-display"
+                      autoFocus
                     />
                   </div>
                   
                   <div>
                     <label className="text-sm font-display font-bold mb-2 block">Price Range</label>
                     <Select value={priceFilter} onValueChange={setPriceFilter}>
-                      <SelectTrigger>
+                      <SelectTrigger className="border-2 border-foreground rounded-2xl">
                         <SelectValue placeholder="Select price range" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="z-[100]">
                         <SelectItem value="all">All Prices</SelectItem>
                         <SelectItem value="0-500">Under ₹500</SelectItem>
                         <SelectItem value="500-1000">₹500 - ₹1000</SelectItem>
@@ -253,10 +256,10 @@ const Header = () => {
                   <div>
                     <label className="text-sm font-display font-bold mb-2 block">Age Range</label>
                     <Select value={ageFilter} onValueChange={setAgeFilter}>
-                      <SelectTrigger>
+                      <SelectTrigger className="border-2 border-foreground rounded-2xl">
                         <SelectValue placeholder="Select age range" />
                       </SelectTrigger>
-                      <SelectContent>
+                      <SelectContent className="z-[100]">
                         <SelectItem value="all">All Ages</SelectItem>
                         <SelectItem value="0-2 Years">0-2 Years</SelectItem>
                         <SelectItem value="3-5 Years">3-5 Years</SelectItem>
@@ -267,13 +270,13 @@ const Header = () => {
                     </Select>
                   </div>
                   
-                  <Button onClick={handleSearch} className="w-full font-display">
+                  <Button onClick={handleSearch} className="w-full font-display h-12 rounded-full border-2 border-foreground">
                     <Search className="h-4 w-4 mr-2" />
                     Search Products 🎯
                   </Button>
                 </div>
-              </PopoverContent>
-            </Popover>
+              </SheetContent>
+            </Sheet>
 
             {user ? (
               <>
