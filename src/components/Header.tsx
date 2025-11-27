@@ -125,17 +125,17 @@ const Header = () => {
 
       {/* Main header - Sticky */}
       <header className="bg-white shadow-sticker border-b-4 border-foreground sticky top-0 z-50">
-        <div className="container mx-auto px-4 py-4">
-        <div className="flex items-center justify-between gap-4">
+        <div className="container mx-auto px-2 sm:px-4 py-3 sm:py-4">
+        <div className="flex items-center justify-between gap-2 sm:gap-4">
           {/* Logo */}
-          <div className="flex items-center space-x-2 flex-shrink-0">
-            <a href="/" className="flex items-center space-x-3 hover-pop">
+          <div className="flex items-center space-x-1 sm:space-x-2 flex-shrink-0">
+            <a href="/" className="flex items-center space-x-2 sm:space-x-3 hover-pop">
               <img 
                 src={leadShineLogo} 
                 alt="Leadshine Logo" 
-                className="h-12 w-auto"
+                className="h-8 sm:h-10 md:h-12 w-auto"
               />
-              <span className="font-display font-bold text-2xl text-primary">
+              <span className="font-display font-bold text-lg sm:text-xl md:text-2xl text-primary">
                 Leadshine
               </span>
             </a>
@@ -212,18 +212,80 @@ const Header = () => {
           </div>
 
           {/* Right actions */}
-          <div className="flex items-center space-x-2">
+          <div className="flex items-center space-x-1 md:space-x-2">
+            {/* Mobile Search Button */}
+            <Popover open={searchOpen} onOpenChange={setSearchOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden hover-pop">
+                  <Search className="h-5 w-5" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[calc(100vw-2rem)] md:w-[400px] p-4 border-2 border-foreground shadow-sticker rounded-3xl" align="end">
+                <div className="space-y-4">
+                  <div>
+                    <label className="text-sm font-display font-bold mb-2 block">Search Products</label>
+                    <Input
+                      placeholder="Enter product name, brand..."
+                      value={searchTerm}
+                      onChange={(e) => setSearchTerm(e.target.value)}
+                      onKeyDown={(e) => e.key === "Enter" && handleSearch()}
+                      className="border-2 border-foreground rounded-2xl font-display"
+                    />
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-display font-bold mb-2 block">Price Range</label>
+                    <Select value={priceFilter} onValueChange={setPriceFilter}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select price range" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Prices</SelectItem>
+                        <SelectItem value="0-500">Under ₹500</SelectItem>
+                        <SelectItem value="500-1000">₹500 - ₹1000</SelectItem>
+                        <SelectItem value="1000-2000">₹1000 - ₹2000</SelectItem>
+                        <SelectItem value="2000-5000">₹2000 - ₹5000</SelectItem>
+                        <SelectItem value="5000+">Above ₹5000</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <div>
+                    <label className="text-sm font-display font-bold mb-2 block">Age Range</label>
+                    <Select value={ageFilter} onValueChange={setAgeFilter}>
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select age range" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="all">All Ages</SelectItem>
+                        <SelectItem value="0-2 Years">0-2 Years</SelectItem>
+                        <SelectItem value="3-5 Years">3-5 Years</SelectItem>
+                        <SelectItem value="6-8 Years">6-8 Years</SelectItem>
+                        <SelectItem value="9-12 Years">9-12 Years</SelectItem>
+                        <SelectItem value="13+ Years">13+ Years</SelectItem>
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  
+                  <Button onClick={handleSearch} className="w-full font-display">
+                    <Search className="h-4 w-4 mr-2" />
+                    Search Products 🎯
+                  </Button>
+                </div>
+              </PopoverContent>
+            </Popover>
+
             {user ? (
               <>
                 <Button 
                   variant="ghost" 
                   size="sm" 
                   onClick={() => navigate('/orders')}
-                  className="hidden md:flex font-display"
+                  className="hidden lg:flex font-display"
                 >
                   Orders
                 </Button>
-                <Button variant="ghost" size="icon" onClick={() => navigate('/profile')} className="hover-pop">
+                <Button variant="ghost" size="icon" onClick={() => navigate('/profile')} className="hover-pop hidden sm:flex">
                   <User className="h-5 w-5" />
                 </Button>
                 <Button variant="ghost" size="icon" className="relative hover-pop" onClick={() => navigate('/wishlist')}>
@@ -246,7 +308,7 @@ const Header = () => {
                   variant="ghost" 
                   size="sm" 
                   onClick={handleLogout}
-                  className="hidden md:flex font-display"
+                  className="hidden lg:flex font-display"
                 >
                   <LogOut className="h-4 w-4 mr-2" />
                   Logout
@@ -257,7 +319,7 @@ const Header = () => {
                 variant="default" 
                 size="sm" 
                 onClick={() => navigate('/auth')}
-                className="font-display"
+                className="font-display text-xs sm:text-sm px-2 sm:px-4"
               >
                 Login 🔐
               </Button>

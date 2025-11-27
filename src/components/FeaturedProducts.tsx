@@ -104,47 +104,47 @@ const FeaturedProducts = () => {
   }
 
   return (
-    <section className="py-20 bg-muted/30">
+    <section className="py-12 sm:py-16 md:py-20 bg-muted/30">
       <div className="container mx-auto px-4">
         {/* Section header */}
-        <div className="text-center mb-16">
-          <h2 className="text-4xl lg:text-5xl font-display font-bold text-foreground mb-4">
+        <div className="text-center mb-12 sm:mb-16">
+          <h2 className="text-3xl sm:text-4xl lg:text-5xl font-display font-bold text-foreground mb-3 sm:mb-4">
             Featured Products
           </h2>
-          <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+          <p className="text-base sm:text-lg md:text-xl text-muted-foreground max-w-2xl mx-auto px-4">
             Discover our most popular wholesale toys, carefully selected for their 
             quality, safety, and educational value.
           </p>
         </div>
 
         {/* Products grid - Gamified Card Design */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-8">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {products.map((product) => (
             <div 
               key={product.id} 
-              className="group bg-white rounded-3xl border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 overflow-hidden"
+              className="group bg-white rounded-3xl border-3 sm:border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 overflow-hidden"
             >
-              <div className="relative p-4">
+              <div className="relative p-3 sm:p-4">
                 <Link to={`/product/${product.id}`}>
                   {product.product_images && product.product_images.length > 0 ? (
                     <img
                       src={product.product_images[0].image_url}
                       alt={product["Material Desc"] || product["Brand Desc"] || "Product"}
-                      className="w-full h-52 object-cover rounded-2xl border-2 border-foreground group-hover:animate-wiggle"
+                      className="w-full h-44 sm:h-52 object-cover rounded-2xl border-2 border-foreground group-hover:animate-wiggle"
                     />
                   ) : (
-                    <div className="w-full h-52 bg-muted rounded-2xl border-2 border-foreground flex items-center justify-center">
-                      <span className="text-muted-foreground font-display">No Image</span>
+                    <div className="w-full h-44 sm:h-52 bg-muted rounded-2xl border-2 border-foreground flex items-center justify-center">
+                      <span className="text-muted-foreground font-display text-sm">No Image</span>
                     </div>
                   )}
                 </Link>
                 
                 {/* Badges */}
-                <Badge className="absolute top-6 left-6 bg-accent text-accent-foreground font-bold text-xs px-3 py-1 shadow-lg border-2 border-foreground">
+                <Badge className="absolute top-5 sm:top-6 left-5 sm:left-6 bg-accent text-accent-foreground font-bold text-[10px] sm:text-xs px-2 sm:px-3 py-1 shadow-lg border-2 border-foreground">
                   ⭐ Featured
                 </Badge>
                 {product.QTY && product.QTY <= 3 && product.QTY > 0 && (
-                  <Badge className="absolute top-6 right-6 bg-secondary text-secondary-foreground font-bold text-xs px-3 py-1 shadow-lg border-2 border-foreground">
+                  <Badge className="absolute top-5 sm:top-6 right-5 sm:right-6 bg-secondary text-secondary-foreground font-bold text-[10px] sm:text-xs px-2 sm:px-3 py-1 shadow-lg border-2 border-foreground">
                     🔥 Low Stock
                   </Badge>
                 )}
@@ -153,13 +153,13 @@ const FeaturedProducts = () => {
                 <Button 
                   size="icon"
                   onClick={(e) => handleAddToWishlist(product.id, e)}
-                  className={`absolute top-16 right-6 h-10 w-10 rounded-full ${
+                  className={`absolute top-14 sm:top-16 right-5 sm:right-6 h-9 w-9 sm:h-10 sm:w-10 rounded-full ${
                     isInWishlist(product.id) 
                       ? 'bg-destructive hover:bg-destructive/80' 
                       : 'bg-accent hover:bg-accent/80'
                   } border-2 border-foreground shadow-lg opacity-0 group-hover:opacity-100 transition-opacity`}
                 >
-                  <Heart className={`h-5 w-5 ${
+                  <Heart className={`h-4 w-4 sm:h-5 sm:w-5 ${
                     isInWishlist(product.id) 
                       ? 'fill-white text-white' 
                       : 'text-white'
@@ -167,39 +167,39 @@ const FeaturedProducts = () => {
                 </Button>
               </div>
 
-              <div className="px-6 pb-6">
-                <div className="text-xs font-bold text-muted-foreground mb-1 font-display uppercase">
+              <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+                <div className="text-[10px] sm:text-xs font-bold text-muted-foreground mb-1 font-display uppercase">
                   {product["Brand Desc"]} {product.SubBrand && `• ${product.SubBrand}`}
                 </div>
                 
                 <Link to={`/product/${product.id}`}>
-                  <h3 className="font-display font-bold text-foreground text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
+                  <h3 className="font-display font-bold text-foreground text-base sm:text-lg mb-2 line-clamp-2 group-hover:text-primary transition-colors">
                     {product["Material Desc"]}
                   </h3>
                 </Link>
                 
                 {product.age_range && (
-                  <Badge variant="outline" className="text-xs mb-3 font-display border-2">
+                  <Badge variant="outline" className="text-[10px] sm:text-xs mb-3 font-display border-2">
                     Age: {product.age_range}
                   </Badge>
                 )}
                 
                 {/* Price */}
-                <div className="flex items-center gap-2 mb-4 flex-wrap">
+                <div className="flex items-center gap-2 mb-3 sm:mb-4 flex-wrap">
                   {product.discount_price ? (
                     <>
-                      <span className="text-base font-display text-muted-foreground line-through">
+                      <span className="text-sm sm:text-base font-display text-muted-foreground line-through">
                         ₹{product["MRP (INR)"]}
                       </span>
-                      <span className="text-2xl font-display font-bold text-primary">
+                      <span className="text-xl sm:text-2xl font-display font-bold text-primary">
                         ₹{product.discount_price}
                       </span>
-                      <Badge className="bg-destructive text-destructive-foreground font-bold text-xs border-2 border-foreground">
+                      <Badge className="bg-destructive text-destructive-foreground font-bold text-[10px] sm:text-xs border-2 border-foreground">
                         {Math.round((1 - product.discount_price / product["MRP (INR)"]) * 100)}% OFF
                       </Badge>
                     </>
                   ) : (
-                    <span className="text-2xl font-display font-bold text-primary">
+                    <span className="text-xl sm:text-2xl font-display font-bold text-primary">
                       ₹{product["MRP (INR)"]}
                     </span>
                   )}
@@ -210,7 +210,7 @@ const FeaturedProducts = () => {
                   <Button 
                     onClick={() => navigate('/cart')}
                     variant="secondary"
-                    className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground"
+                    className="w-full rounded-full h-10 sm:h-12 font-display font-bold text-sm sm:text-base shadow-lg hover-pop border-2 border-foreground"
                     disabled={!product.QTY || product.QTY === 0}
                   >
                     Go to Cart 🛒
@@ -218,11 +218,12 @@ const FeaturedProducts = () => {
                 ) : (
                   <Button 
                     onClick={() => handleAddToCart(product.id)}
-                    className="w-full rounded-full h-12 font-display font-bold text-base shadow-lg hover-pop border-2 border-foreground"
+                    className="w-full rounded-full h-10 sm:h-12 font-display font-bold text-sm sm:text-base shadow-lg hover-pop border-2 border-foreground"
                     disabled={!product.QTY || product.QTY === 0}
                   >
-                    <ShoppingCart className="h-5 w-5 mr-2" />
-                    {!product.QTY || product.QTY === 0 ? "Out of Stock 🚫" : "Add to Cart 🛒"}
+                    <ShoppingCart className="h-4 w-4 sm:h-5 sm:w-5 mr-2" />
+                    <span className="hidden sm:inline">{!product.QTY || product.QTY === 0 ? "Out of Stock 🚫" : "Add to Cart 🛒"}</span>
+                    <span className="sm:hidden">{!product.QTY || product.QTY === 0 ? "Out of Stock" : "Add 🛒"}</span>
                   </Button>
                 )}
               </div>
@@ -231,9 +232,9 @@ const FeaturedProducts = () => {
         </div>
 
         {/* Bottom CTA */}
-        <div className="text-center mt-12">
+        <div className="text-center mt-8 sm:mt-12">
           <Link to="/shop-all">
-            <Button size="lg" className="rounded-full h-14 px-10 font-display font-bold text-lg shadow-glow hover-pop border-4 border-foreground">
+            <Button size="lg" className="rounded-full h-12 sm:h-14 px-8 sm:px-10 font-display font-bold text-base sm:text-lg shadow-glow hover-pop border-3 sm:border-4 border-foreground">
               View All Products 🚀
             </Button>
           </Link>
