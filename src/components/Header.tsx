@@ -7,7 +7,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
-import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import leadShineLogo from "@/assets/leadshine-logo.png";
@@ -28,7 +28,8 @@ const Header = () => {
   const { wishlistItems } = useWishlist();
   const [user, setUser] = useState<any>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false); // desktop search popover
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false); // mobile search sheet
   const [searchTerm, setSearchTerm] = useState("");
   const [priceFilter, setPriceFilter] = useState("all");
   const [ageFilter, setAgeFilter] = useState("all");
@@ -100,6 +101,7 @@ const Header = () => {
     
     navigate(`/shop-all?${params.toString()}`);
     setSearchOpen(false);
+    setMobileSearchOpen(false);
     setSearchTerm("");
     setPriceFilter("all");
     setAgeFilter("all");
@@ -214,16 +216,18 @@ const Header = () => {
           {/* Right actions */}
           <div className="flex items-center space-x-1 md:space-x-2">
             {/* Mobile Search Button */}
-            <Sheet open={searchOpen} onOpenChange={setSearchOpen}>
+            <Sheet open={mobileSearchOpen} onOpenChange={setMobileSearchOpen}>
               <SheetTrigger asChild>
                 <Button variant="ghost" size="icon" className="md:hidden hover-pop">
                   <Search className="h-5 w-5" />
                 </Button>
               </SheetTrigger>
               <SheetContent side="top" className="h-auto max-h-[90vh] overflow-y-auto">
-                <div className="space-y-4 pt-6">
-                  <h3 className="text-lg font-display font-bold mb-4">Search Products</h3>
-                  
+                <SheetHeader className="mb-2">
+                  <SheetTitle className="font-display">Search Products</SheetTitle>
+                  <SheetDescription>Find toys by name, price range, and age group.</SheetDescription>
+                </SheetHeader>
+                <div className="space-y-4 pb-4">
                   <div>
                     <label className="text-sm font-display font-bold mb-2 block">Product Name</label>
                     <Input
