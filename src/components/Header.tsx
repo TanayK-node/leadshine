@@ -21,6 +21,13 @@ interface AnnouncementBanner {
   text_color: string;
 }
 
+interface NavCategory {
+  id: string;
+  name: string;
+  slug: string | null;
+  emoji: string | null;
+}
+
 const Header = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -28,15 +35,17 @@ const Header = () => {
   const { wishlistItems } = useWishlist();
   const [user, setUser] = useState<any>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false); // desktop search popover
-  const [mobileSearchOpen, setMobileSearchOpen] = useState(false); // mobile search sheet
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [priceFilter, setPriceFilter] = useState("all");
   const [ageFilter, setAgeFilter] = useState("all");
   const [banner, setBanner] = useState<AnnouncementBanner | null>(null);
+  const [navCategories, setNavCategories] = useState<NavCategory[]>([]);
 
   useEffect(() => {
     fetchBanner();
+    fetchNavCategories();
   }, []);
 
   const fetchBanner = async () => {
@@ -56,13 +65,26 @@ const Header = () => {
     }
   };
 
+  const fetchNavCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("classifications")
+        .select("id, name, slug, emoji")
+        .eq("show_in_navbar", true)
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      setNavCategories(data || []);
+    } catch (error) {
+      console.error("Error fetching nav categories:", error);
+    }
+  };
+
   useEffect(() => {
-    // Check current session
     supabase.auth.getSession().then(({ data: { session } }) => {
       setUser(session?.user ?? null);
     });
 
-    // Listen for auth changes
     const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
       setUser(session?.user ?? null);
     });
@@ -72,12 +94,8 @@ const Header = () => {
 
   const handleLogout = async () => {
     try {
-      // Clear local user state first
       setUser(null);
-      
-      // Then attempt to sign out from Supabase
       await supabase.auth.signOut();
-      
       toast({
         title: "Logged out",
         description: "You have been successfully logged out.",
@@ -360,34 +378,17 @@ const Header = () => {
                   >
                     Trending
                   </a>
-                  <a 
-                    href="/school-essentials" 
-                    className="text-foreground hover:text-primary font-medium transition-colors py-2"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    School Essentials
-                  </a>
-                  <a 
-                    href="/toys-and-games" 
-                    className="text-foreground hover:text-primary font-medium transition-colors py-2"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Toys & Games
-                  </a>
-                  <a 
-                    href="/kids-accessories" 
-                    className="text-foreground hover:text-primary font-medium transition-colors py-2"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Kids Accessories
-                  </a>
-                  <a 
-                    href="/art-and-crafts" 
-                    className="text-foreground hover:text-primary font-medium transition-colors py-2"
-                    onClick={() => setMobileMenuOpen(false)}
-                  >
-                    Art & Crafts
-                  </a>
+                  {/* Dynamic categories */}
+                  {navCategories.map((category) => (
+                    <a 
+                      key={category.id}
+                      href={`/category/${category.slug}`} 
+                      className="text-foreground hover:text-primary font-medium transition-colors py-2"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      {category.emoji} {category.name}
+                    </a>
+                  ))}
                   {user && (
                     <>
                       <a 
@@ -396,6 +397,20 @@ const Header = () => {
                         onClick={() => setMobileMenuOpen(false)}
                       >
                         Wishlist
+                      </a>
+                      <a 
+                        href="/cart" 
+                        className="text-foreground hover:text-primary font-medium transition-colors py-2"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Cart
+                      </a>
+                      <a 
+                        href="/profile" 
+                        className="text-foreground hover:text-primary font-medium transition-colors py-2"
+                        onClick={() => setMobileMenuOpen(false)}
+                      >
+                        Profile
                       </a>
                       <a 
                         href="/orders" 
@@ -425,7 +440,7 @@ const Header = () => {
 
         {/* Navigation */}
         <nav className="mt-6 hidden md:block border-t-2 border-foreground/10 pt-4">
-          <ul className="flex space-x-6 justify-center">
+          <ul className="flex space-x-6 justify-center flex-wrap gap-y-2">
             <li>
               <a href="/shop-all" className="text-foreground hover:text-primary font-display font-semibold transition-colors hover-pop inline-block">
                 Shop All 🛍️
@@ -441,26 +456,17 @@ const Header = () => {
                 Trending 🔥
               </a>
             </li>
-            <li>
-              <a href="/school-essentials" className="text-foreground hover:text-primary font-display font-semibold transition-colors hover-pop inline-block">
-                School 📚
-              </a>
-            </li>
-            <li>
-              <a href="/toys-and-games" className="text-foreground hover:text-primary font-display font-semibold transition-colors hover-pop inline-block">
-                Toys & Games 🎮
-              </a>
-            </li>
-            <li>
-              <a href="/kids-accessories" className="text-foreground hover:text-primary font-display font-semibold transition-colors hover-pop inline-block">
-                Accessories 👒
-              </a>
-            </li>
-            <li>
-              <a href="/art-and-crafts" className="text-foreground hover:text-primary font-display font-semibold transition-colors hover-pop inline-block">
-                Art & Crafts 🎨
-              </a>
-            </li>
+            {/* Dynamic categories */}
+            {navCategories.map((category) => (
+              <li key={category.id}>
+                <a 
+                  href={`/category/${category.slug}`} 
+                  className="text-foreground hover:text-primary font-display font-semibold transition-colors hover-pop inline-block"
+                >
+                  {category.name} {category.emoji}
+                </a>
+              </li>
+            ))}
           </ul>
         </nav>
         </div>

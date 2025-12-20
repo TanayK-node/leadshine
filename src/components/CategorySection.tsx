@@ -1,47 +1,85 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { Skeleton } from "@/components/ui/skeleton";
 import blocksImage from "@/assets/blocks-category.jpg";
 import plushImage from "@/assets/plush-category.jpg";
 import vehiclesImage from "@/assets/vehicles-category.jpg";
 
-const categories = [
-  {
-    title: "School Essentials",
-    description: "Everything your child needs for learning and school",
-    image: blocksImage,
-    color: "bg-toy-blue",
-    itemCount: "150+ items",
-    link: "/school-essentials"
-  },
-  {
-    title: "Toys & Games",
-    description: "Fun and engaging toys for endless entertainment",
-    image: vehiclesImage,
-    color: "bg-toy-yellow",
-    itemCount: "200+ items",
-    link: "/toys-and-games"
-  },
-  {
-    title: "Accessories",
-    description: "Stylish and practical accessories for kids",
-    image: plushImage,
-    color: "bg-toy-pink",
-    itemCount: "120+ items",
-    link: "/kids-accessories"
-  },
-  {
-    title: "Art & Crafts",
-    description: "Creative supplies to inspire young artists",
-    image: blocksImage,
-    color: "bg-primary/10",
-    itemCount: "180+ items",
-    link: "/art-and-crafts"
-  },
-];
+interface Category {
+  id: string;
+  name: string;
+  description: string | null;
+  slug: string | null;
+  emoji: string | null;
+  image_url: string | null;
+  display_order: number | null;
+  show_in_navbar: boolean | null;
+  item_count_label: string | null;
+}
+
+// Default images to use when no image_url is set
+const defaultImages = [blocksImage, vehiclesImage, plushImage];
+const defaultColors = ["bg-toy-blue", "bg-toy-yellow", "bg-toy-pink", "bg-primary/10"];
 
 const CategorySection = () => {
+  const [categories, setCategories] = useState<Category[]>([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("classifications")
+        .select("*")
+        .eq("show_in_navbar", true)
+        .order("display_order", { ascending: true });
+
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const getCategoryImage = (category: Category, index: number) => {
+    if (category.image_url) return category.image_url;
+    return defaultImages[index % defaultImages.length];
+  };
+
+  const getCategoryColor = (index: number) => {
+    return defaultColors[index % defaultColors.length];
+  };
+
+  if (loading) {
+    return (
+      <section className="py-12 sm:py-16 md:py-20 bg-background">
+        <div className="container mx-auto px-4">
+          <div className="text-center mb-12 sm:mb-16">
+            <Skeleton className="h-12 w-64 mx-auto mb-4" />
+            <Skeleton className="h-6 w-96 mx-auto" />
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
+            {[...Array(4)].map((_, i) => (
+              <Skeleton key={i} className="h-96 rounded-3xl" />
+            ))}
+          </div>
+        </div>
+      </section>
+    );
+  }
+
+  if (categories.length === 0) {
+    return null;
+  }
+
   return (
     <section className="py-12 sm:py-16 md:py-20 bg-background">
       <div className="container mx-auto px-4">
@@ -60,29 +98,29 @@ const CategorySection = () => {
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 sm:gap-8">
           {categories.map((category, index) => (
             <Link 
-              key={index}
-              to={category.link}
+              key={category.id}
+              to={`/category/${category.slug}`}
               className="group bg-white rounded-3xl border-3 sm:border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 overflow-hidden cursor-pointer"
             >
               <div className="relative p-3 sm:p-4">
                 <img
-                  src={category.image}
-                  alt={`${category.title} - wholesale toys category`}
+                  src={getCategoryImage(category, index)}
+                  alt={`${category.name} - wholesale toys category`}
                   className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl border-2 border-foreground group-hover:animate-wiggle"
                 />
                 
                 {/* Category badge */}
-                <div className={`absolute top-5 sm:top-6 left-5 sm:left-6 ${category.color} text-foreground px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold border-2 border-foreground shadow-lg`}>
-                  {category.itemCount}
+                <div className={`absolute top-5 sm:top-6 left-5 sm:left-6 ${getCategoryColor(index)} text-foreground px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold border-2 border-foreground shadow-lg`}>
+                  {category.item_count_label || "Browse"}
                 </div>
               </div>
 
               <div className="px-4 sm:px-6 pb-4 sm:pb-6">
                 <h3 className="text-xl sm:text-2xl font-display font-bold text-foreground mb-2 group-hover:text-primary transition-colors">
-                  {category.title}
+                  {category.emoji} {category.name}
                 </h3>
                 <p className="text-sm sm:text-base text-muted-foreground mb-4 sm:mb-6 font-display">
-                  {category.description}
+                  {category.description || `Explore our ${category.name} collection`}
                 </p>
                 
                 <Button className="w-full rounded-full h-10 sm:h-12 font-display font-bold text-sm sm:text-base shadow-lg hover-pop border-2 border-foreground">
@@ -96,9 +134,11 @@ const CategorySection = () => {
 
         {/* Bottom CTA */}
         <div className="text-center mt-12 sm:mt-16">
-          <Button size="lg" className="rounded-full h-12 sm:h-14 px-8 sm:px-10 font-display font-bold text-base sm:text-lg shadow-glow hover-pop border-3 sm:border-4 border-foreground">
-            View All Categories 🎯
-          </Button>
+          <Link to="/shop-all">
+            <Button size="lg" className="rounded-full h-12 sm:h-14 px-8 sm:px-10 font-display font-bold text-base sm:text-lg shadow-glow hover-pop border-3 sm:border-4 border-foreground">
+              View All Products 🎯
+            </Button>
+          </Link>
         </div>
       </div>
     </section>

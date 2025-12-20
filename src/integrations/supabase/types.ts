@@ -110,22 +110,40 @@ export type Database = {
         Row: {
           created_at: string | null
           description: string | null
+          display_order: number | null
+          emoji: string | null
           id: string
+          image_url: string | null
+          item_count_label: string | null
           name: string
+          show_in_navbar: boolean | null
+          slug: string | null
           updated_at: string | null
         }
         Insert: {
           created_at?: string | null
           description?: string | null
+          display_order?: number | null
+          emoji?: string | null
           id?: string
+          image_url?: string | null
+          item_count_label?: string | null
           name: string
+          show_in_navbar?: boolean | null
+          slug?: string | null
           updated_at?: string | null
         }
         Update: {
           created_at?: string | null
           description?: string | null
+          display_order?: number | null
+          emoji?: string | null
           id?: string
+          image_url?: string | null
+          item_count_label?: string | null
           name?: string
+          show_in_navbar?: boolean | null
+          slug?: string | null
           updated_at?: string | null
         }
         Relationships: []
