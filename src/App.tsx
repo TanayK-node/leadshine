@@ -15,6 +15,7 @@ import SchoolEssentials from "./pages/SchoolEssentials";
 import ToysAndGames from "./pages/ToysAndGames";
 import KidsAccessories from "./pages/KidsAccessories";
 import ArtAndCrafts from "./pages/ArtAndCrafts";
+import CategoryPage from "./pages/CategoryPage";
 import Profile from "./pages/Profile";
 import Cart from "./pages/Cart";
 import Checkout from "./pages/Checkout";
@@ -52,6 +53,7 @@ const App = () => (
           <Route path="/toys-and-games" element={<ToysAndGames />} />
           <Route path="/kids-accessories" element={<KidsAccessories />} />
           <Route path="/art-and-crafts" element={<ArtAndCrafts />} />
+          <Route path="/category/:slug" element={<CategoryPage />} />
           <Route path="/profile" element={<Profile />} />
           <Route path="/cart" element={<Cart />} />
           <Route path="/wishlist" element={<Wishlist />} />

@@ -1,7 +1,38 @@
+import { useState, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Facebook, Instagram, Twitter, Youtube, Mail, Phone, MapPin } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+
+interface Category {
+  id: string;
+  name: string;
+  slug: string | null;
+  show_in_navbar: boolean | null;
+}
 
 const Footer = () => {
+  const [categories, setCategories] = useState<Category[]>([]);
+
+  useEffect(() => {
+    fetchCategories();
+  }, []);
+
+  const fetchCategories = async () => {
+    try {
+      const { data, error } = await supabase
+        .from("classifications")
+        .select("id, name, slug, show_in_navbar")
+        .eq("show_in_navbar", true)
+        .order("display_order", { ascending: true })
+        .limit(5);
+
+      if (error) throw error;
+      setCategories(data || []);
+    } catch (error) {
+      console.error("Error fetching categories:", error);
+    }
+  };
+
   return (
     <footer className="bg-foreground text-background">
       <div className="container mx-auto px-4 py-12 sm:py-16">
@@ -43,10 +74,16 @@ const Footer = () => {
               <li><a href="/shop-all" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">Shop All Products</a></li>
               <li><a href="/new-arrivals" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">New Arrivals</a></li>
               <li><a href="/trending" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">Trending</a></li>
-              <li><a href="/school-essentials" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">School Essentials</a></li>
-              <li><a href="/toys-and-games" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">Toys & Games</a></li>
-              <li><a href="/kids-accessories" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">Kids Accessories</a></li>
-              <li><a href="/art-and-crafts" className="text-background/80 hover:text-background transition-colors text-sm sm:text-base">Art & Crafts</a></li>
+              {categories.map((category) => (
+                <li key={category.id}>
+                  <a 
+                    href={`/category/${category.slug}`} 
+                    className="text-background/80 hover:text-background transition-colors text-sm sm:text-base"
+                  >
+                    {category.name}
+                  </a>
+                </li>
+              ))}
             </ul>
           </div>
 
