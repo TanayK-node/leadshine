@@ -1,6 +1,6 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
-import { createHmac } from "https://deno.land/std@0.177.0/node/crypto.ts";
+import { crypto } from "https://deno.land/std@0.168.0/crypto/mod.ts";
 
 const corsHeaders = {
   'Access-Control-Allow-Origin': '*',
@@ -19,6 +19,26 @@ interface VerifyPaymentRequest {
   address_data?: any;
 }
 
+// Helper function to create HMAC SHA256 signature
+async function createHmacSha256(key: string, message: string): Promise<string> {
+  const encoder = new TextEncoder();
+  const keyData = encoder.encode(key);
+  const messageData = encoder.encode(message);
+  
+  const cryptoKey = await crypto.subtle.importKey(
+    "raw",
+    keyData,
+    { name: "HMAC", hash: "SHA-256" },
+    false,
+    ["sign"]
+  );
+  
+  const signature = await crypto.subtle.sign("HMAC", cryptoKey, messageData);
+  return Array.from(new Uint8Array(signature))
+    .map(b => b.toString(16).padStart(2, '0'))
+    .join('');
+}
+
 serve(async (req) => {
   // Handle CORS preflight requests
   if (req.method === 'OPTIONS') {
@@ -30,7 +50,14 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get('SUPABASE_URL');
     const supabaseServiceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
 
+    console.log('Environment check:', { 
+      hasKeySecret: !!razorpayKeySecret, 
+      hasSupabaseUrl: !!supabaseUrl, 
+      hasServiceRoleKey: !!supabaseServiceRoleKey 
+    });
+
     if (!razorpayKeySecret || !supabaseUrl || !supabaseServiceRoleKey) {
+      console.error('Missing environment variables');
       throw new Error('Server configuration error');
     }
 
@@ -38,6 +65,7 @@ serve(async (req) => {
     const authHeader = req.headers.get('Authorization');
     
     if (!authHeader) {
+      console.error('No authorization header');
       return new Response(
         JSON.stringify({ error: 'Unauthorized' }),
         { status: 401, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
@@ -56,12 +84,18 @@ serve(async (req) => {
       address_data,
     }: VerifyPaymentRequest = await req.json();
 
-    console.log('Verifying payment:', { razorpay_order_id, razorpay_payment_id });
+    console.log('Verifying payment:', { razorpay_order_id, razorpay_payment_id, order_id });
 
-    // Verify signature
-    const generatedSignature = createHmac('sha256', razorpayKeySecret)
-      .update(`${razorpay_order_id}|${razorpay_payment_id}`)
-      .digest('hex');
+    // Verify signature using Web Crypto API
+    const generatedSignature = await createHmacSha256(
+      razorpayKeySecret,
+      `${razorpay_order_id}|${razorpay_payment_id}`
+    );
+
+    console.log('Signature comparison:', { 
+      generated: generatedSignature.substring(0, 10) + '...', 
+      received: razorpay_signature.substring(0, 10) + '...' 
+    });
 
     if (generatedSignature !== razorpay_signature) {
       console.error('Signature verification failed');
