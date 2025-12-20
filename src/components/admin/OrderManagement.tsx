@@ -345,6 +345,8 @@ export const OrderManagement = () => {
         return "bg-yellow-100 text-yellow-800 border-yellow-200";
       case 'out for delivery':
         return "bg-blue-100 text-blue-800 border-blue-200";
+      case 'delivered':
+        return "bg-green-100 text-green-800 border-green-200";
       case 'cancelled':
         return "bg-red-100 text-red-800 border-red-200";
       default:
@@ -411,6 +413,7 @@ export const OrderManagement = () => {
                   <SelectItem value="all">All Statuses</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="out for delivery">Out for Delivery</SelectItem>
+                  <SelectItem value="delivered">Delivered</SelectItem>
                   <SelectItem value="cancelled">Cancelled</SelectItem>
                 </SelectContent>
               </Select>
@@ -490,6 +493,7 @@ export const OrderManagement = () => {
                         <SelectContent className="bg-popover">
                           <SelectItem value="pending">Pending</SelectItem>
                           <SelectItem value="out for delivery">Out for Delivery</SelectItem>
+                          <SelectItem value="delivered">Delivered</SelectItem>
                           <SelectItem value="cancelled">Cancelled</SelectItem>
                         </SelectContent>
                       </Select>
