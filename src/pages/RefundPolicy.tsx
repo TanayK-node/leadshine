@@ -1,7 +1,12 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import { MessageCircle } from "lucide-react";
 
 const RefundPolicy = () => {
+  const whatsappNumber = "919820142014";
+  const whatsappMessage = encodeURIComponent("Hi, I would like to inquire about a refund for my order.");
+  const whatsappLink = `https://wa.me/${whatsappNumber}?text=${whatsappMessage}`;
+
   return (
     <div className="min-h-screen bg-background flex flex-col">
       <Header />
@@ -10,6 +15,26 @@ const RefundPolicy = () => {
         
         <div className="prose prose-lg max-w-none space-y-6 text-muted-foreground">
           <p className="text-sm text-muted-foreground mb-6">Last updated on Nov 22nd 2025</p>
+          
+          {/* WhatsApp Contact Box */}
+          <div className="bg-green-50 dark:bg-green-950 border border-green-200 dark:border-green-800 rounded-lg p-6 mb-8">
+            <div className="flex items-center gap-3 mb-3">
+              <MessageCircle className="h-6 w-6 text-green-600" />
+              <h3 className="text-lg font-semibold text-green-800 dark:text-green-200 m-0">Need a Refund?</h3>
+            </div>
+            <p className="text-green-700 dark:text-green-300 mb-4">
+              For any refund inquiries, please contact us directly on WhatsApp for quick assistance.
+            </p>
+            <a
+              href={whatsappLink}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 bg-green-600 hover:bg-green-700 text-white px-6 py-3 rounded-lg font-medium transition-colors"
+            >
+              <MessageCircle className="h-5 w-5" />
+              Message us on WhatsApp
+            </a>
+          </div>
           
           <section>
             <p className="leading-relaxed">
@@ -67,6 +92,9 @@ const RefundPolicy = () => {
             <div className="space-y-2">
               <p>Phone: <a href="tel:+919820142014" className="text-primary hover:underline">+91 9820142014</a></p>
               <p>Email: <a href="mailto:leadshinemarketing@gmail.com" className="text-primary hover:underline">leadshinemarketing@gmail.com</a></p>
+              <p>
+                WhatsApp: <a href={whatsappLink} target="_blank" rel="noopener noreferrer" className="text-green-600 hover:underline">+91 9820142014</a>
+              </p>
             </div>
           </section>
         </div>

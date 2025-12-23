@@ -1,5 +1,8 @@
 project_id = "fpqtaxmijlamocmsofok"
 
+[functions.send-otp]
+verify_jwt = false
+
 [functions.razorpay-create-order]
 verify_jwt = true
 
