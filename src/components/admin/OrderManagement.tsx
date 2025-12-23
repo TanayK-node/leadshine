@@ -19,6 +19,7 @@ interface OrderItem {
   products: {
     "Material Desc": string;
     "Brand Desc": string;
+    "Funskool Code": string;
   } | null;
 }
 
@@ -81,7 +82,8 @@ export const OrderManagement = () => {
             price,
             products (
               "Material Desc",
-              "Brand Desc"
+              "Brand Desc",
+              "Funskool Code"
             )
           )
         `)
