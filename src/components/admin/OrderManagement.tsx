@@ -85,6 +85,7 @@ export const OrderManagement = () => {
             )
           )
         `)
+        .neq('status', 'pending') // Only show orders with successful payment
         .order('created_at', { ascending: false });
 
       if (error) throw error;
