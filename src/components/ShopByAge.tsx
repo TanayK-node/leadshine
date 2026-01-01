@@ -45,7 +45,7 @@ const ShopByAge = () => {
       color: "bg-accent/10 border-accent/20", 
       count: 0,
       emoji: "🎯",
-      image: "https://images.unsplash.com/photo-1509350007205-187c66b38e85?w=400&h=300&fit=crop"
+      image: "https://www.goodplayguide.com/wp-content/uploads/2024/11/The-Embarrassment-of-Playing-with-Toys-Encouraging-Pre-Teens-to-Keep-Playing-Why-Play-Matters-for-Older-Children-.png"
     },
   ]);
 
