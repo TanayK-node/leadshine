@@ -4,9 +4,10 @@ import { ArrowRight } from "lucide-react";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Skeleton } from "@/components/ui/skeleton";
-import blocksImage from "@/assets/blocks-category.jpg";
-import plushImage from "@/assets/plush-category.jpg";
-import vehiclesImage from "@/assets/vehicles-category.jpg";
+import blocksImage from "@/assets/BoardGames-logo.jpg"
+import plushImage from "@/assets/educational.jpg";
+import vehiclesImage from "@/assets/actiontoys.avif";
+import nerf from "@/assets/nerf.jpg";
 
 interface Category {
   id: string;
@@ -21,7 +22,7 @@ interface Category {
 }
 
 // Default images to use when no image_url is set
-const defaultImages = [blocksImage, vehiclesImage, plushImage];
+const defaultImages = [blocksImage, vehiclesImage, plushImage,nerf];
 const defaultColors = ["bg-toy-blue", "bg-toy-yellow", "bg-toy-pink", "bg-primary/10"];
 
 const CategorySection = () => {
