@@ -17,7 +17,11 @@ const HeroSection = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [selectedIndex, setSelectedIndex] = useState(0);
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true });
+  const [emblaRef, emblaApi] = useEmblaCarousel({ 
+    loop: true,
+    duration: 30,
+    skipSnaps: false
+  });
 
   const scrollPrev = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
   const scrollNext = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
@@ -87,9 +91,9 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="relative w-full">
+    <section className="relative w-full mt-0">
       <div className="overflow-hidden" ref={emblaRef}>
-        <div className="flex">
+        <div className="flex transition-transform duration-500 ease-out">
           {banners.map((banner) => (
             <div
               key={banner.id}
@@ -99,7 +103,7 @@ const HeroSection = () => {
                 src={banner.image_url}
                 alt="Hero banner"
                 className={cn(
-                  "w-full h-full object-cover",
+                  "w-full h-full object-cover transition-opacity duration-300",
                   banner.link_url && "cursor-pointer"
                 )}
                 onClick={() => handleBannerClick(banner.link_url)}
