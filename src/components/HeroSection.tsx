@@ -91,7 +91,7 @@ const HeroSection = () => {
   }
 
   return (
-    <section className="relative w-full mt-0">
+    <section className="relative w-full pt-4 sm:pt-6">
       <div className="overflow-hidden" ref={emblaRef}>
         <div className="flex transition-transform duration-500 ease-out">
           {banners.map((banner) => (
