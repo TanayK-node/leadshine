@@ -6,6 +6,7 @@ import { InventoryManagement } from "@/components/admin/InventoryManagement";
 import { CouponManagement } from "@/components/admin/CouponManagement";
 import { AdminManagement } from "@/components/admin/AdminManagement";
 import { AnnouncementBannerManagement } from "@/components/admin/AnnouncementBannerManagement";
+import { HeroBannerManagement } from "@/components/admin/HeroBannerManagement";
 import { BrandManagement } from "@/components/admin/BrandManagement";
 import CategoryManagement from "@/components/admin/CategoryManagement";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -166,7 +167,7 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="orders" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-7 bg-card border">
+          <TabsList className="grid w-full grid-cols-8 bg-card border">
             <TabsTrigger value="orders" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Orders
             </TabsTrigger>
@@ -182,8 +183,11 @@ const Admin = () => {
             <TabsTrigger value="coupons" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Coupons
             </TabsTrigger>
+            <TabsTrigger value="hero-banners" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Hero Banners
+            </TabsTrigger>
             <TabsTrigger value="banner" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Banner
+              Announcement
             </TabsTrigger>
             <TabsTrigger value="admins" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Admins
@@ -208,6 +212,10 @@ const Admin = () => {
 
           <TabsContent value="coupons">
             <CouponManagement />
+          </TabsContent>
+
+          <TabsContent value="hero-banners">
+            <HeroBannerManagement />
           </TabsContent>
 
           <TabsContent value="banner">
