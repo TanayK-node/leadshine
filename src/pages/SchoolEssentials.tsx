@@ -10,6 +10,7 @@ import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
+import { LazyImage } from "@/components/LazyImage";
 
 const SchoolEssentials = () => {
   const navigate = useNavigate();
@@ -134,10 +135,10 @@ const SchoolEssentials = () => {
                   <div className="relative overflow-hidden rounded-t-lg">
                     <Link to={`/product/${product.id}`}>
                       {product.product_images && product.product_images.length > 0 ? (
-                        <img
+                        <LazyImage
                           src={product.product_images[0].image_url}
                           alt={product["Material Desc"] || "Product"}
-                          className="w-full h-48 object-cover group-hover:scale-105 transition-transform duration-300 cursor-pointer"
+                          className="w-full h-48 group-hover:scale-105 transition-transform duration-300 cursor-pointer"
                         />
                       ) : (
                         <div className="w-full h-48 bg-muted flex items-center justify-center">

@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { ShoppingCart, Grid, List } from "lucide-react";
+import { LazyImage } from "@/components/LazyImage";
 
 interface Product {
   id: string;
@@ -199,10 +200,10 @@ const CategoryPage = () => {
                 onClick={() => navigate(`/product/${product.id}`)}
               >
                 <div className="relative aspect-square overflow-hidden bg-muted">
-                  <img
+                  <LazyImage
                     src={getProductImage(product)}
                     alt={product["Material Desc"] || "Product"}
-                    className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                    className="w-full h-full group-hover:scale-105 transition-transform"
                   />
                   {product.QTY !== null && product.QTY <= 5 && product.QTY > 0 && (
                     <Badge className="absolute top-2 right-2 bg-orange-500">
@@ -259,10 +260,10 @@ const CategoryPage = () => {
                 onClick={() => navigate(`/product/${product.id}`)}
               >
                 <div className="w-32 h-32 flex-shrink-0 bg-muted">
-                  <img
+                  <LazyImage
                     src={getProductImage(product)}
                     alt={product["Material Desc"] || "Product"}
-                    className="w-full h-full object-cover"
+                    className="w-full h-full"
                   />
                 </div>
                 <CardContent className="flex-1 p-4 flex flex-col justify-between">

@@ -1,13 +1,13 @@
 import { useState, useEffect } from "react";
 import { Link, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Star, ShoppingCart, Heart } from "lucide-react";
+import { ShoppingCart, Heart } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
+import { LazyImage } from "@/components/LazyImage";
 
 const FeaturedProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
@@ -127,10 +127,10 @@ const FeaturedProducts = () => {
               <div className="relative p-3 sm:p-4">
                 <Link to={`/product/${product.id}`}>
                   {product.product_images && product.product_images.length > 0 ? (
-                    <img
+                    <LazyImage
                       src={product.product_images[0].image_url}
                       alt={product["Material Desc"] || product["Brand Desc"] || "Product"}
-                      className="w-full h-44 sm:h-52 object-cover rounded-2xl border-2 border-foreground group-hover:animate-wiggle"
+                      className="w-full h-44 sm:h-52 rounded-2xl border-2 border-foreground group-hover:animate-wiggle"
                     />
                   ) : (
                     <div className="w-full h-44 sm:h-52 bg-muted rounded-2xl border-2 border-foreground flex items-center justify-center">
