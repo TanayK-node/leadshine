@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
-import { Search, Filter, ShoppingCart, Heart, Grid, List } from "lucide-react";
+import { ShoppingCart, Heart, Grid, List } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
@@ -11,6 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
+import { LazyImage } from "@/components/LazyImage";
 import type { Tables } from "@/integrations/supabase/types";
 
 type Product = Tables<"products"> & {
@@ -246,12 +246,12 @@ const ShopAllProducts = () => {
                 className="group bg-white rounded-3xl border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 overflow-hidden"
               >
                 <div className="relative p-4">
-                  <Link to={`/product/${product.id}`}>
+                <Link to={`/product/${product.id}`}>
                     {product.product_images && product.product_images.length > 0 ? (
-                      <img
+                      <LazyImage
                         src={product.product_images[0].image_url}
                         alt={product["Material Desc"] || "Product"}
-                        className="w-full h-52 object-cover rounded-2xl border-2 border-foreground group-hover:animate-wiggle"
+                        className="w-full h-52 rounded-2xl border-2 border-foreground group-hover:animate-wiggle"
                       />
                     ) : (
                       <div className="w-full h-52 bg-muted rounded-2xl border-2 border-foreground flex items-center justify-center">
@@ -342,10 +342,10 @@ const ShopAllProducts = () => {
                   <div className="flex items-center gap-4 p-4">
                     <Link to={`/product/${product.id}`}>
                       {product.product_images && product.product_images.length > 0 ? (
-                        <img 
+                        <LazyImage 
                           src={product.product_images[0].image_url} 
                           alt={product["Material Desc"] || "Product"}
-                          className="w-24 h-24 object-cover rounded cursor-pointer"
+                          className="w-24 h-24 rounded cursor-pointer"
                         />
                       ) : (
                         <div className="w-24 h-24 bg-muted flex items-center justify-center rounded cursor-pointer">
