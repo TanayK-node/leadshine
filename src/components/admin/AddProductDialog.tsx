@@ -13,20 +13,19 @@ import { z } from "zod";
 
 const productSchema = z.object({
   "Brand Desc": z.string().min(1, "Brand is required"),
-  SubBrand: z.string().optional(),
-  "Super Category Description": z.string().optional(),
+  SubBrand: z.string().nullable().optional(),
+  "Super Category Description": z.string().nullable().optional(),
   "Material Desc": z.string().min(1, "Product name is required"),
-  "Funskool Code": z.string().optional(),
-  "Barcode (UPC/EAN)": z.string().optional(),
+  "Barcode (UPC/EAN)": z.string().nullable().optional(),
   "MRP (INR)": z.number().min(0, "Price must be positive"),
   QTY: z.number().int().min(0, "Quantity must be non-negative"),
-  "Elec/ Non Elec": z.string().optional(),
-  age_range: z.string().optional(),
+  "Elec/ Non Elec": z.string().nullable().optional(),
+  age_range: z.string().nullable().optional(),
   "Sku length": z.number().nullable().optional(),
   "Sku Width": z.number().nullable().optional(),
   "Sku Height": z.number().nullable().optional(),
-  "Unit of measure of SKU length Width and Height": z.string().optional(),
-  description: z.string().optional(),
+  "Unit of measure of SKU length Width and Height": z.string().nullable().optional(),
+  description: z.string().nullable().optional(),
 });
 
 interface Brand {
@@ -64,7 +63,6 @@ export const AddProductDialog = ({ onProductAdded }: { onProductAdded?: () => vo
   const [formData, setFormData] = useState({
     "Super Category Description": "",
     "Material Desc": "",
-    "Funskool Code": "",
     "Barcode (UPC/EAN)": "",
     "MRP (INR)": "",
     QTY: "",
@@ -184,7 +182,9 @@ export const AddProductDialog = ({ onProductAdded }: { onProductAdded?: () => vo
     try {
       // Get brand and subbrand names
       const selectedBrand = brands.find(b => b.id === selectedBrandId);
-      const selectedSubBrand = subBrands.find(sb => sb.id === selectedSubBrandId);
+      const selectedSubBrand = selectedSubBrandId && selectedSubBrandId !== "none" 
+        ? subBrands.find(sb => sb.id === selectedSubBrandId) 
+        : null;
 
       if (!selectedBrand) {
         toast({
@@ -198,20 +198,19 @@ export const AddProductDialog = ({ onProductAdded }: { onProductAdded?: () => vo
 
       const productData = {
         "Brand Desc": selectedBrand.name,
-        SubBrand: selectedSubBrand?.name || "",
-        "Super Category Description": formData["Super Category Description"] || "",
+        SubBrand: selectedSubBrand?.name || null,
+        "Super Category Description": formData["Super Category Description"] || null,
         "Material Desc": formData["Material Desc"],
-        "Funskool Code": formData["Funskool Code"] || "",
-        "Barcode (UPC/EAN)": formData["Barcode (UPC/EAN)"],
+        "Barcode (UPC/EAN)": formData["Barcode (UPC/EAN)"] || null,
         "MRP (INR)": parseFloat(formData["MRP (INR)"]) || 0,
         QTY: parseInt(formData.QTY) || 0,
-        "Elec/ Non Elec": formData["Elec/ Non Elec"],
-        age_range: formData.age_range,
+        "Elec/ Non Elec": formData["Elec/ Non Elec"] || null,
+        age_range: formData.age_range || null,
         "Sku length": formData["Sku length"] ? parseFloat(formData["Sku length"]) : null,
         "Sku Width": formData["Sku Width"] ? parseFloat(formData["Sku Width"]) : null,
         "Sku Height": formData["Sku Height"] ? parseFloat(formData["Sku Height"]) : null,
-        "Unit of measure of SKU length Width and Height": formData["Unit of measure of SKU length Width and Height"],
-        description: formData.description || "",
+        "Unit of measure of SKU length Width and Height": formData["Unit of measure of SKU length Width and Height"] || null,
+        description: formData.description || null,
       };
 
       // Validate with zod
@@ -304,7 +303,6 @@ export const AddProductDialog = ({ onProductAdded }: { onProductAdded?: () => vo
       setFormData({
         "Super Category Description": "",
         "Material Desc": "",
-        "Funskool Code": "",
         "Barcode (UPC/EAN)": "",
         "MRP (INR)": "",
         QTY: "",
@@ -376,16 +374,17 @@ export const AddProductDialog = ({ onProductAdded }: { onProductAdded?: () => vo
             </div>
 
             <div className="space-y-2">
-              <Label htmlFor="subbrand">Sub-Brand</Label>
+              <Label htmlFor="subbrand">Sub-Brand (Optional)</Label>
               <Select 
                 value={selectedSubBrandId} 
                 onValueChange={setSelectedSubBrandId}
-                disabled={!selectedBrandId || filteredSubBrands.length === 0}
+                disabled={!selectedBrandId}
               >
                 <SelectTrigger>
-                  <SelectValue placeholder={selectedBrandId ? "Select sub-brand" : "Select brand first"} />
+                  <SelectValue placeholder={selectedBrandId ? (filteredSubBrands.length === 0 ? "No sub-brands available" : "Select sub-brand (optional)") : "Select brand first"} />
                 </SelectTrigger>
                 <SelectContent className="bg-popover z-50">
+                  <SelectItem value="none">None</SelectItem>
                   {filteredSubBrands.map((subBrand) => (
                     <SelectItem key={subBrand.id} value={subBrand.id}>
                       {subBrand.name}
@@ -509,9 +508,9 @@ export const AddProductDialog = ({ onProductAdded }: { onProductAdded?: () => vo
             />
           </div>
 
-          {/* Category */}
+          {/* Category (Optional) */}
           <div className="space-y-2">
-            <Label htmlFor="category">Category</Label>
+            <Label htmlFor="category">Category (Optional)</Label>
             <Input
               id="category"
               value={formData["Super Category Description"]}
@@ -520,27 +519,15 @@ export const AddProductDialog = ({ onProductAdded }: { onProductAdded?: () => vo
             />
           </div>
 
-          {/* SKU and Barcode */}
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-            <div className="space-y-2">
-              <Label htmlFor="sku">SKU Code</Label>
-              <Input
-                id="sku"
-                value={formData["Funskool Code"]}
-                onChange={(e) => setFormData({ ...formData, "Funskool Code": e.target.value })}
-                placeholder="e.g., FS001"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="barcode">Barcode (UPC/EAN)</Label>
-              <Input
-                id="barcode"
-                value={formData["Barcode (UPC/EAN)"]}
-                onChange={(e) => setFormData({ ...formData, "Barcode (UPC/EAN)": e.target.value })}
-                placeholder="e.g., 1234567890123"
-              />
-            </div>
+          {/* Barcode */}
+          <div className="space-y-2">
+            <Label htmlFor="barcode">Barcode (UPC/EAN) (Optional)</Label>
+            <Input
+              id="barcode"
+              value={formData["Barcode (UPC/EAN)"]}
+              onChange={(e) => setFormData({ ...formData, "Barcode (UPC/EAN)": e.target.value })}
+              placeholder="e.g., 1234567890123"
+            />
           </div>
 
           {/* Price and Quantity */}
