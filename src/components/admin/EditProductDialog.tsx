@@ -178,9 +178,15 @@ export const EditProductDialog = ({ product, onProductUpdated }: { product: Prod
       setSubBrands(subBrandsData || []);
 
       // Find and set current subbrand
-      const currentSubBrand = subBrandsData?.find(sb => sb.name === product.SubBrand);
-      if (currentSubBrand) {
-        setSelectedSubBrandId(currentSubBrand.id);
+      if (product.SubBrand) {
+        const currentSubBrand = subBrandsData?.find(sb => sb.name === product.SubBrand);
+        if (currentSubBrand) {
+          setSelectedSubBrandId(currentSubBrand.id);
+        } else {
+          setSelectedSubBrandId("none");
+        }
+      } else {
+        setSelectedSubBrandId("none");
       }
 
       // Fetch classifications
