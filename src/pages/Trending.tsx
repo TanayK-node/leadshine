@@ -45,15 +45,32 @@ const Trending = () => {
 
   const fetchProducts = async () => {
     try {
-      // For trending, we'll show products from all classifications but limit to 20
-      const { data, error } = await supabase
+      // First try to get trending products marked by admin
+      let { data, error } = await supabase
         .from('products')
         .select(`
           *,
           product_images(image_url)
         `)
         .eq('is_deleted', false)
-        .limit(20);
+        .eq('is_trending', true);
+
+      if (error) throw error;
+
+      // If no trending products marked, fall back to first 20 products
+      if (!data || data.length === 0) {
+        const fallback = await supabase
+          .from('products')
+          .select(`
+            *,
+            product_images(image_url)
+          `)
+          .eq('is_deleted', false)
+          .limit(20);
+        
+        if (fallback.error) throw fallback.error;
+        data = fallback.data;
+      }
 
       if (error) throw error;
       setProducts(data || []);

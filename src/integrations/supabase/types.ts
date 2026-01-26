@@ -466,6 +466,8 @@ export type Database = {
           id: string
           image_url: string | null
           is_deleted: boolean | null
+          is_featured: boolean | null
+          is_trending: boolean | null
           "Material Desc": string | null
           "MRP (INR)": number | null
           QTY: number | null
@@ -491,6 +493,8 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_deleted?: boolean | null
+          is_featured?: boolean | null
+          is_trending?: boolean | null
           "Material Desc"?: string | null
           "MRP (INR)"?: number | null
           QTY?: number | null
@@ -516,6 +520,8 @@ export type Database = {
           id?: string
           image_url?: string | null
           is_deleted?: boolean | null
+          is_featured?: boolean | null
+          is_trending?: boolean | null
           "Material Desc"?: string | null
           "MRP (INR)"?: number | null
           QTY?: number | null

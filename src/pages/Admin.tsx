@@ -9,6 +9,7 @@ import { AnnouncementBannerManagement } from "@/components/admin/AnnouncementBan
 import { HeroBannerManagement } from "@/components/admin/HeroBannerManagement";
 import { BrandManagement } from "@/components/admin/BrandManagement";
 import CategoryManagement from "@/components/admin/CategoryManagement";
+import { FeaturedProductManagement } from "@/components/admin/FeaturedProductManagement";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { ShoppingCart, Package, TrendingUp, Users } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -167,12 +168,15 @@ const Admin = () => {
         </div>
 
         <Tabs defaultValue="orders" className="space-y-6">
-          <TabsList className="grid w-full grid-cols-8 bg-card border">
+          <TabsList className="grid w-full grid-cols-9 bg-card border">
             <TabsTrigger value="orders" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Orders
             </TabsTrigger>
             <TabsTrigger value="inventory" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Inventory
+            </TabsTrigger>
+            <TabsTrigger value="featured" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
+              Featured
             </TabsTrigger>
             <TabsTrigger value="categories" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Categories
@@ -184,10 +188,10 @@ const Admin = () => {
               Coupons
             </TabsTrigger>
             <TabsTrigger value="hero-banners" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Hero Banners
+              Hero
             </TabsTrigger>
             <TabsTrigger value="banner" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
-              Announcement
+              Announce
             </TabsTrigger>
             <TabsTrigger value="admins" className="data-[state=active]:bg-primary data-[state=active]:text-primary-foreground">
               Admins
@@ -200,6 +204,10 @@ const Admin = () => {
           
           <TabsContent value="inventory">
             <InventoryManagement />
+          </TabsContent>
+
+          <TabsContent value="featured">
+            <FeaturedProductManagement />
           </TabsContent>
 
           <TabsContent value="categories">
