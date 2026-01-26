@@ -23,14 +23,33 @@ const FeaturedProducts = () => {
 
   const fetchProducts = async () => {
     try {
-      const { data, error } = await supabase
+      // First try to get featured products
+      let { data, error } = await supabase
         .from('products')
         .select(`
           *,
           product_images(image_url)
         `)
         .eq('is_deleted', false)
+        .eq('is_featured', true)
         .limit(4);
+
+      if (error) throw error;
+
+      // If no featured products, fall back to first 4 products
+      if (!data || data.length === 0) {
+        const fallback = await supabase
+          .from('products')
+          .select(`
+            *,
+            product_images(image_url)
+          `)
+          .eq('is_deleted', false)
+          .limit(4);
+        
+        if (fallback.error) throw fallback.error;
+        data = fallback.data;
+      }
 
       if (error) throw error;
       setProducts(data || []);
