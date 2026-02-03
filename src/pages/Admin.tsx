@@ -60,10 +60,11 @@ const Admin = () => {
 
   const fetchStats = async () => {
     try {
-      // Fetch total orders
+      // Fetch total orders (only confirmed/paid orders, excluding pending)
       const { count: ordersCount, error: ordersError } = await supabase
         .from('orders')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true })
+        .neq('status', 'pending');
 
       if (ordersError) throw ordersError;
 
@@ -74,19 +75,21 @@ const Admin = () => {
 
       if (productsError) throw productsError;
 
-      // Fetch total revenue
+      // Fetch total revenue (only from paid orders)
       const { data: ordersData, error: revenueError } = await supabase
         .from('orders')
-        .select('total_amount');
+        .select('total_amount')
+        .neq('status', 'pending');
 
       if (revenueError) throw revenueError;
 
       const totalRevenue = ordersData?.reduce((sum, order) => sum + Number(order.total_amount || 0), 0) || 0;
 
-      // Fetch unique customers count
+      // Fetch unique customers count (only from paid orders)
       const { data: customersData, error: customersError } = await supabase
         .from('orders')
-        .select('user_id');
+        .select('user_id')
+        .neq('status', 'pending');
 
       if (customersError) throw customersError;
 
