@@ -97,7 +97,7 @@ const HeroSection = () => {
           {banners.map((banner) => (
             <div
               key={banner.id}
-              className="flex-[0_0_100%] min-w-0 relative aspect-[16/6] sm:aspect-[16/5] md:aspect-[16/4]"
+              className="flex-[0_0_100%] min-w-0 relative aspect-[16/5]"
             >
               <img
                 src={banner.image_url}
