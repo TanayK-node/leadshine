@@ -78,13 +78,13 @@ const HeroSection = () => {
 
   if (isLoading) {
     return (
-      <section className="relative w-full aspect-[16/6] sm:aspect-[16/5] md:aspect-[16/4] bg-muted animate-pulse" />
+      <section className="relative w-full aspect-[16/5] bg-muted animate-pulse" />
     );
   }
 
   if (banners.length === 0) {
     return (
-      <section className="relative w-full aspect-[16/6] sm:aspect-[16/5] md:aspect-[16/4] bg-gradient-to-br from-primary/10 via-background to-accent/10 flex items-center justify-center">
+      <section className="relative w-full aspect-[16/5] bg-gradient-to-br from-primary/10 via-background to-accent/10 flex items-center justify-center">
         <p className="text-muted-foreground">No banners available</p>
       </section>
     );
