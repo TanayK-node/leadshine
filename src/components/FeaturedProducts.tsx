@@ -186,7 +186,7 @@ const FeaturedProducts = () => {
                 </Button>
               </div>
 
-              <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+              <div className="px-4 sm:px-6 pb-4 sm:pb-6 flex flex-col flex-1">
                 <div className="text-[10px] sm:text-xs font-bold text-muted-foreground mb-1 font-display uppercase">
                   {product["Brand Desc"]} {product.SubBrand && `• ${product.SubBrand}`}
                 </div>
