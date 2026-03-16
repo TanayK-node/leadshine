@@ -141,7 +141,7 @@ const FeaturedProducts = () => {
           {products.map((product) => (
             <div 
               key={product.id} 
-              className="group bg-white rounded-3xl border-3 sm:border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 overflow-hidden"
+              className="group bg-white rounded-3xl border-3 sm:border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 overflow-hidden flex flex-col h-full"
             >
               <div className="relative p-3 sm:p-4">
                 <Link to={`/product/${product.id}`}>
@@ -186,7 +186,7 @@ const FeaturedProducts = () => {
                 </Button>
               </div>
 
-              <div className="px-4 sm:px-6 pb-4 sm:pb-6">
+              <div className="px-4 sm:px-6 pb-4 sm:pb-6 flex flex-col flex-1">
                 <div className="text-[10px] sm:text-xs font-bold text-muted-foreground mb-1 font-display uppercase">
                   {product["Brand Desc"]} {product.SubBrand && `• ${product.SubBrand}`}
                 </div>
@@ -224,7 +224,7 @@ const FeaturedProducts = () => {
                   )}
                 </div>
 
-                {/* Add to Cart Button */}
+                <div className="mt-auto">
                 {isInCart(product.id) ? (
                   <Button 
                     onClick={() => navigate('/cart')}
@@ -245,6 +245,7 @@ const FeaturedProducts = () => {
                     <span className="sm:hidden">{!product.QTY || product.QTY === 0 ? "Out of Stock" : "Add 🛒"}</span>
                   </Button>
                 )}
+                </div>
               </div>
             </div>
           ))}
