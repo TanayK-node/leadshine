@@ -27,6 +27,15 @@ interface NavCategory {
   emoji: string | null;
 }
 
+interface SearchProduct {
+  id: string;
+  "Material Desc": string | null;
+  "Brand Desc": string | null;
+  "MRP (INR)": number | null;
+  discount_price: number | null;
+  product_images?: Array<{ image_url: string }>;
+}
+
 const Header = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -34,80 +43,59 @@ const Header = () => {
   const { wishlistItems } = useWishlist();
   const [user, setUser] = useState<any>(null);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [searchOpen, setSearchOpen] = useState(false);
   const [mobileSearchOpen, setMobileSearchOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [priceFilter, setPriceFilter] = useState("all");
   const [ageFilter, setAgeFilter] = useState("all");
+  const [showFilters, setShowFilters] = useState(false);
   const [banner, setBanner] = useState<AnnouncementBanner | null>(null);
   const [navCategories, setNavCategories] = useState<NavCategory[]>([]);
+  const [searchResults, setSearchResults] = useState<SearchProduct[]>([]);
+  const [searchLoading, setSearchLoading] = useState(false);
+  const [showDropdown, setShowDropdown] = useState(false);
+  const searchRef = useRef<HTMLDivElement>(null);
+  const mobileSearchRef = useRef<HTMLDivElement>(null);
+  const debounceRef = useRef<NodeJS.Timeout>();
 
+  // Close dropdown on outside click
   useEffect(() => {
-    fetchBanner();
-    fetchNavCategories();
+    const handleClickOutside = (e: MouseEvent) => {
+      if (searchRef.current && !searchRef.current.contains(e.target as Node)) {
+        setShowDropdown(false);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
-  const fetchBanner = async () => {
+  const searchProducts = useCallback(async (term: string) => {
+    if (term.length < 2) {
+      setSearchResults([]);
+      setShowDropdown(false);
+      return;
+    }
+    setSearchLoading(true);
     try {
       const { data, error } = await supabase
-        .from("announcement_banner")
-        .select("*")
-        .eq("is_active", true)
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
+        .from("products")
+        .select(`id, "Material Desc", "Brand Desc", "MRP (INR)", discount_price, product_images(image_url)`)
+        .eq("is_deleted", false)
+        .or(`"Material Desc".ilike.%${term}%,"Brand Desc".ilike.%${term}%,"Funskool Code".ilike.%${term}%`)
+        .limit(8);
       if (error) throw error;
-      if (data) setBanner(data);
-    } catch (error) {
-      console.error("Error fetching banner:", error);
+      setSearchResults(data || []);
+      setShowDropdown(true);
+    } catch {
+      setSearchResults([]);
+    } finally {
+      setSearchLoading(false);
     }
-  };
-
-  const fetchNavCategories = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("classifications")
-        .select("id, name, slug, emoji")
-        .eq("show_in_navbar", true)
-        .order("display_order", { ascending: true });
-
-      if (error) throw error;
-      setNavCategories(data || []);
-    } catch (error) {
-      console.error("Error fetching nav categories:", error);
-    }
-  };
-
-  useEffect(() => {
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      setUser(session?.user ?? null);
-    });
-
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
-      setUser(session?.user ?? null);
-    });
-
-    return () => subscription.unsubscribe();
   }, []);
 
-  const handleLogout = async () => {
-    try {
-      setUser(null);
-      await supabase.auth.signOut();
-      toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
-      });
-      navigate("/");
-    } catch (error) {
-      console.error('Logout error:', error);
-      toast({
-        title: "Logged out",
-        description: "You have been successfully logged out.",
-      });
-      navigate("/");
-    }
+  const handleSearchInput = (value: string) => {
+    setSearchTerm(value);
+    if (debounceRef.current) clearTimeout(debounceRef.current);
+    debounceRef.current = setTimeout(() => searchProducts(value), 300);
   };
 
   const handleSearch = () => {
@@ -117,11 +105,19 @@ const Header = () => {
     if (ageFilter !== "all") params.set("age", ageFilter);
     
     navigate(`/shop-all?${params.toString()}`);
-    setSearchOpen(false);
+    setShowDropdown(false);
     setMobileSearchOpen(false);
     setSearchTerm("");
     setPriceFilter("all");
     setAgeFilter("all");
+    setShowFilters(false);
+  };
+
+  const handleProductClick = (id: string) => {
+    navigate(`/product/${id}`);
+    setShowDropdown(false);
+    setMobileSearchOpen(false);
+    setSearchTerm("");
   };
 
   return (
