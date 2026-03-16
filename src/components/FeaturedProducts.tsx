@@ -141,7 +141,7 @@ const FeaturedProducts = () => {
           {products.map((product) => (
             <div 
               key={product.id} 
-              className="group bg-white rounded-3xl border-3 sm:border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 overflow-hidden"
+              className="group bg-white rounded-3xl border-3 sm:border-4 border-foreground shadow-sticker hover:shadow-glow hover:scale-105 hover:-rotate-1 transition-all duration-300 overflow-hidden flex flex-col h-full"
             >
               <div className="relative p-3 sm:p-4">
                 <Link to={`/product/${product.id}`}>
