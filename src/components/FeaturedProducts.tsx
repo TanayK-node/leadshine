@@ -245,6 +245,7 @@ const FeaturedProducts = () => {
                     <span className="sm:hidden">{!product.QTY || product.QTY === 0 ? "Out of Stock" : "Add 🛒"}</span>
                   </Button>
                 )}
+                </div>
               </div>
             </div>
           ))}
