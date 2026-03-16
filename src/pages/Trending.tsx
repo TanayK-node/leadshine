@@ -64,7 +64,7 @@ const Trending = () => {
           <p className="text-muted-foreground">Most popular toys and games right now!</p>
         </div>
 
-        <div className="flex flex-col md:flex-row gap-4 mb-8">
+        {/* <div className="flex flex-col md:flex-row gap-4 mb-8">
           <div className="flex-1 relative">
             <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
             <Input placeholder="Search products..." value={searchTerm} onChange={(e) => setSearchTerm(e.target.value)} className="pl-10" />
@@ -72,7 +72,7 @@ const Trending = () => {
           <Button variant="outline" className="flex items-center gap-2">
             <Filter className="h-4 w-4" /> Filter
           </Button>
-        </div>
+        </div> */}
 
         {loading ? (
           <div className="text-center py-12">Loading products...</div>

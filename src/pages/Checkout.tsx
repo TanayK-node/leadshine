@@ -42,18 +42,18 @@ const Checkout = () => {
   const { cartItems, loading: cartLoading, clearCart } = useCart();
   const [user, setUser] = useState<any>(null);
   const [submitting, setSubmitting] = useState(false);
-  
+
   // Coupon state
   const [couponCode, setCouponCode] = useState("");
   const [appliedCoupon, setAppliedCoupon] = useState<any>(null);
   const [couponLoading, setCouponLoading] = useState(false);
   const [discount, setDiscount] = useState(0);
-  
+
   // Saved addresses state
   const [savedAddresses, setSavedAddresses] = useState<any[]>([]);
   const [selectedAddressId, setSelectedAddressId] = useState<string>("");
   const [saveAddress, setSaveAddress] = useState(false);
-  
+
   const [formData, setFormData] = useState<CheckoutFormData>({
     fullName: "",
     email: "",
@@ -78,22 +78,22 @@ const Checkout = () => {
         navigate("/auth");
       } else {
         setUser(session.user);
-        
+
         // Fetch user profile to get name
         const { data: profile } = await supabase
           .from('profiles')
           .select('name, phone_number')
           .eq('id', session.user.id)
           .single();
-        
+
         // Pre-fill form data from user profile
-        setFormData(prev => ({ 
-          ...prev, 
+        setFormData(prev => ({
+          ...prev,
           email: session.user.email || "",
           fullName: profile?.name || "",
           phone: profile?.phone_number || ""
         }));
-        
+
         // Fetch saved addresses
         fetchSavedAddresses(session.user.id);
       }
@@ -164,7 +164,7 @@ const Checkout = () => {
     const price = product?.discount_price || product?.["MRP (INR)"] || 0;
     return sum + (price * item.quantity);
   }, 0);
-  
+
   const shipping = subtotal > 500 ? 0 : 50;
   const total = subtotal + shipping - discount;
 
@@ -395,7 +395,7 @@ const Checkout = () => {
           }
         },
         modal: {
-          ondismiss: function() {
+          ondismiss: function () {
             setSubmitting(false);
             toast({
               title: "Payment cancelled",
@@ -451,7 +451,7 @@ const Checkout = () => {
   return (
     <div className="min-h-screen bg-background">
       <Header />
-      
+
       <main className="container mx-auto px-4 py-8 max-w-6xl">
         <div className="mb-8">
           <Button variant="ghost" onClick={() => navigate('/cart')} className="mb-4">
@@ -576,17 +576,17 @@ const Checkout = () => {
                       rows={3}
                     />
                   </div>
-                  
+
                   {/* Save Address Checkbox */}
                   {!selectedAddressId && (
                     <div className="flex items-center space-x-2 pt-2">
-                      <Checkbox 
-                        id="saveAddress" 
+                      <Checkbox
+                        id="saveAddress"
                         checked={saveAddress}
                         onCheckedChange={(checked) => setSaveAddress(checked as boolean)}
                       />
-                      <Label 
-                        htmlFor="saveAddress" 
+                      <Label
+                        htmlFor="saveAddress"
                         className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70 cursor-pointer"
                       >
                         Save this address for future orders
@@ -633,7 +633,7 @@ const Checkout = () => {
                 </CardHeader>
                 <CardContent className="space-y-4">
                   <div className="space-y-3">
-                     {cartItems.map((item) => {
+                    {cartItems.map((item) => {
                       const product = item.products;
                       if (!product) return null;
                       const price = product.discount_price || product["MRP (INR)"];
@@ -719,9 +719,9 @@ const Checkout = () => {
                     )}
                   </div>
 
-                  <Button 
-                    type="submit" 
-                    className="w-full" 
+                  <Button
+                    type="submit"
+                    className="w-full"
                     size="lg"
                     disabled={submitting}
                   >
