@@ -224,7 +224,7 @@ const FeaturedProducts = () => {
                   )}
                 </div>
 
-                {/* Add to Cart Button */}
+                <div className="mt-auto">
                 {isInCart(product.id) ? (
                   <Button 
                     onClick={() => navigate('/cart')}
