@@ -94,8 +94,8 @@ export default {
           },
         },
         wiggle: {
-          "0%, 100%": { transform: "rotate(-2deg)" },
-          "50%": { transform: "rotate(2deg)" },
+          "0%, 100%": { transform: "rotate(-0.5deg)" },
+          "50%": { transform: "rotate(0.5deg)" },
         },
         float: {
           "0%, 100%": { transform: "translateY(0px)" },

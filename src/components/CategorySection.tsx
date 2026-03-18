@@ -110,10 +110,6 @@ const CategorySection = () => {
                   className="w-full h-48 sm:h-56 md:h-64 object-cover rounded-2xl border-2 border-foreground group-hover:animate-wiggle"
                 />
                 
-                {/* Category badge */}
-                <div className={`absolute top-5 sm:top-6 left-5 sm:left-6 ${getCategoryColor(index)} text-foreground px-3 sm:px-4 py-1.5 sm:py-2 rounded-full text-xs sm:text-sm font-bold border-2 border-foreground shadow-lg`}>
-                  {category.item_count_label || "Browse"}
-                </div>
               </div>
 
               <div className="px-4 sm:px-6 pb-4 sm:pb-6">
