@@ -33,6 +33,7 @@ const ShopAllProducts = () => {
   const [filterAge, setFilterAge] = useState(searchParams.get("age") || "all");
   const [priceFilter, setPriceFilter] = useState(searchParams.get("price") || "all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const { filterProducts } = useProductImageFilter();
 
   const handleAddToCart = async (productId: string) => {
     const { data: { session } } = await supabase.auth.getSession();
