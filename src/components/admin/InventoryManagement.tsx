@@ -8,6 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Label } from "@/components/ui/label";
+import { useSiteSetting } from "@/hooks/use-site-settings";
 import {
   AlertDialog,
   AlertDialogAction,
