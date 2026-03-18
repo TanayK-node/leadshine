@@ -13,6 +13,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { LazyImage } from "@/components/LazyImage";
 import type { Tables } from "@/integrations/supabase/types";
+import { useProductImageFilter } from "@/hooks/use-product-image-filter";
 
 type Product = Tables<"products"> & {
   product_images?: Array<{ image_url: string }>;
