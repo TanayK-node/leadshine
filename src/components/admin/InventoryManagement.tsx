@@ -44,7 +44,7 @@ export const InventoryManagement = () => {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select('*, product_images(id)')
         .eq('is_deleted', false)
         .order('Brand Desc');
 
