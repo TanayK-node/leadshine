@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { LazyImage } from "@/components/LazyImage";
-
+import { useProductImageFilter } from "@/hooks/use-product-image-filter";
 const FeaturedProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
