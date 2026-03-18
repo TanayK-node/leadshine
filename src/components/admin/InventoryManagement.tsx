@@ -257,7 +257,7 @@ export const InventoryManagement = () => {
               />
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">Filter by Brand</label>
                 <select
@@ -272,6 +272,28 @@ export const InventoryManagement = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Filter by Images</label>
+                <select
+                  value={imageFilter}
+                  onChange={(e) => setImageFilter(e.target.value as "all" | "with" | "without")}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="all">All Products</option>
+                  <option value="with">With Images Only</option>
+                  <option value="without">Without Images Only</option>
+                </select>
+              </div>
+              <div className="flex items-end">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="image-toggle"
+                    checked={imageFilter === "with"}
+                    onCheckedChange={(checked) => setImageFilter(checked ? "with" : "all")}
+                  />
+                  <Label htmlFor="image-toggle" className="text-sm">Show only with images</Label>
+                </div>
               </div>
             </div>
           </div>
