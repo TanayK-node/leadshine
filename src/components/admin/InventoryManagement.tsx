@@ -203,8 +203,13 @@ export const InventoryManagement = () => {
       product["Material Desc"]?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesBrand = brandFilter === "all" || product["Brand Desc"] === brandFilter;
+
+    const hasImages = product.product_images && product.product_images.length > 0;
+    const matchesImage = imageFilter === "all" || 
+      (imageFilter === "with" && hasImages) || 
+      (imageFilter === "without" && !hasImages);
     
-    return matchesSearch && matchesBrand;
+    return matchesSearch && matchesBrand && matchesImage;
   });
 
   const uniqueBrands = Array.from(new Set(products.map(p => p["Brand Desc"]).filter(Boolean)));
