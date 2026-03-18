@@ -97,7 +97,7 @@ const ShopAllProducts = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    let filtered = products;
+    let filtered = filterProducts(products);
 
     // Search filter
     if (searchTerm) {
