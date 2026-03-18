@@ -25,6 +25,7 @@ const CategoryPage = () => {
   const [category, setCategory] = useState<Category | null>(null);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { filterProducts } = useProductImageFilter();
 
   useEffect(() => {
     if (slug) fetchCategoryAndProducts();
