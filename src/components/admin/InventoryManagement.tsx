@@ -288,13 +288,29 @@ export const InventoryManagement = () => {
                 </select>
               </div>
               <div className="flex items-end">
-                <div className="flex items-center space-x-2">
-                  <Switch
-                    id="image-toggle"
-                    checked={imageFilter === "with"}
-                    onCheckedChange={(checked) => setImageFilter(checked ? "with" : "all")}
-                  />
-                  <Label htmlFor="image-toggle" className="text-sm">Show only with images</Label>
+                <div className="flex flex-col gap-2">
+                  <div className="flex items-center space-x-2">
+                    <Switch
+                      id="user-image-toggle"
+                      checked={showOnlyWithImages}
+                      onCheckedChange={async (checked) => {
+                        const success = await updateShowImages(checked);
+                        if (success) {
+                          toast({
+                            title: checked ? "Enabled" : "Disabled",
+                            description: checked 
+                              ? "Users will only see products with images" 
+                              : "Users will see all products",
+                          });
+                        } else {
+                          toast({ title: "Error", description: "Failed to update setting", variant: "destructive" });
+                        }
+                      }}
+                    />
+                    <Label htmlFor="user-image-toggle" className="text-sm font-medium">
+                      Show only products with images (User side)
+                    </Label>
+                  </div>
                 </div>
               </div>
             </div>
