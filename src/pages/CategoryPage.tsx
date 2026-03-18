@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProductCard from "@/components/ProductCard";
+import { useProductImageFilter } from "@/hooks/use-product-image-filter";
 
 interface Category {
   id: string;
