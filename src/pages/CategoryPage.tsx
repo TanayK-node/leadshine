@@ -53,7 +53,7 @@ const CategoryPage = () => {
         .order("created_at", { ascending: false });
 
       if (productsError) throw productsError;
-      setProducts(productsData || []);
+      setProducts(filterProducts(productsData || []));
     } catch (error) {
       console.error("Error fetching category data:", error);
       toast({ title: "Error", description: "Failed to load category", variant: "destructive" });

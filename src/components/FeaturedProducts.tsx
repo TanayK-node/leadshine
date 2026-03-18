@@ -53,7 +53,7 @@ const FeaturedProducts = () => {
       }
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts(filterProducts(data || []));
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({

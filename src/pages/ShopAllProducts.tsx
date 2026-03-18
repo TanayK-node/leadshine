@@ -160,7 +160,7 @@ const ShopAllProducts = () => {
     });
 
     setFilteredProducts(filtered);
-  }, [products, searchTerm, sortBy, filterCategory, filterAge, priceFilter]);
+  }, [products, searchTerm, sortBy, filterCategory, filterAge, priceFilter, filterProducts]);
 
   const categories = Array.from(new Set(products.map(p => p["Super Category Description"]).filter(Boolean)));
   const ageRanges = ["0-2 Years", "3-5 Years", "6-8 Years", "9-12 Years", "13+ Years"];
