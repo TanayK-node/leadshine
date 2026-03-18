@@ -16,6 +16,7 @@ const FeaturedProducts = () => {
   const { addToCart, isInCart } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
+  const { filterProducts } = useProductImageFilter();
 
   useEffect(() => {
     fetchProducts();
