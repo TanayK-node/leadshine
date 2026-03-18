@@ -48,7 +48,7 @@ const ToysAndGames = () => {
     }
   };
 
-  const filteredProducts = products.filter(product =>
+  const filteredProducts = filterProducts(products).filter(product =>
     product["Brand Desc"]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product["Material Desc"]?.toLowerCase().includes(searchTerm.toLowerCase())
   );
