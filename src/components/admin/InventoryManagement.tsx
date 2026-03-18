@@ -36,6 +36,7 @@ export const InventoryManagement = () => {
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
   const { toast } = useToast();
+  const { value: showOnlyWithImages, updateSetting: updateShowImages } = useSiteSetting('show_only_products_with_images');
 
   useEffect(() => {
     fetchProducts();
