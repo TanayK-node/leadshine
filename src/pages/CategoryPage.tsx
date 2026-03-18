@@ -7,6 +7,7 @@ import Footer from "@/components/Footer";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import ProductCard from "@/components/ProductCard";
+import { useProductImageFilter } from "@/hooks/use-product-image-filter";
 
 interface Category {
   id: string;
@@ -24,6 +25,7 @@ const CategoryPage = () => {
   const [category, setCategory] = useState<Category | null>(null);
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
+  const { filterProducts } = useProductImageFilter();
 
   useEffect(() => {
     if (slug) fetchCategoryAndProducts();
@@ -51,7 +53,7 @@ const CategoryPage = () => {
         .order("created_at", { ascending: false });
 
       if (productsError) throw productsError;
-      setProducts(productsData || []);
+      setProducts(filterProducts(productsData || []));
     } catch (error) {
       console.error("Error fetching category data:", error);
       toast({ title: "Error", description: "Failed to load category", variant: "destructive" });

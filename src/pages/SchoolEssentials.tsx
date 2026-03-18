@@ -7,12 +7,14 @@ import Footer from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import ProductCard from "@/components/ProductCard";
+import { useProductImageFilter } from "@/hooks/use-product-image-filter";
 
 const SchoolEssentials = () => {
   const [searchTerm, setSearchTerm] = useState("");
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { filterProducts } = useProductImageFilter();
 
   useEffect(() => {
     fetchProducts();
@@ -45,7 +47,7 @@ const SchoolEssentials = () => {
     }
   };
 
-  const filteredProducts = products.filter(product =>
+  const filteredProducts = filterProducts(products).filter(product =>
     product["Brand Desc"]?.toLowerCase().includes(searchTerm.toLowerCase()) ||
     product["Material Desc"]?.toLowerCase().includes(searchTerm.toLowerCase())
   );

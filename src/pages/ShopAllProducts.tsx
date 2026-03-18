@@ -13,6 +13,7 @@ import { Link, useNavigate, useSearchParams } from "react-router-dom";
 import { useCart } from "@/contexts/CartContext";
 import { LazyImage } from "@/components/LazyImage";
 import type { Tables } from "@/integrations/supabase/types";
+import { useProductImageFilter } from "@/hooks/use-product-image-filter";
 
 type Product = Tables<"products"> & {
   product_images?: Array<{ image_url: string }>;
@@ -32,6 +33,7 @@ const ShopAllProducts = () => {
   const [filterAge, setFilterAge] = useState(searchParams.get("age") || "all");
   const [priceFilter, setPriceFilter] = useState(searchParams.get("price") || "all");
   const [viewMode, setViewMode] = useState<"grid" | "list">("grid");
+  const { filterProducts } = useProductImageFilter();
 
   const handleAddToCart = async (productId: string) => {
     const { data: { session } } = await supabase.auth.getSession();
@@ -95,7 +97,7 @@ const ShopAllProducts = () => {
   }, [searchParams]);
 
   useEffect(() => {
-    let filtered = products;
+    let filtered = filterProducts(products);
 
     // Search filter
     if (searchTerm) {
@@ -158,7 +160,7 @@ const ShopAllProducts = () => {
     });
 
     setFilteredProducts(filtered);
-  }, [products, searchTerm, sortBy, filterCategory, filterAge, priceFilter]);
+  }, [products, searchTerm, sortBy, filterCategory, filterAge, priceFilter, filterProducts]);
 
   const categories = Array.from(new Set(products.map(p => p["Super Category Description"]).filter(Boolean)));
   const ageRanges = ["0-2 Years", "3-5 Years", "6-8 Years", "9-12 Years", "13+ Years"];

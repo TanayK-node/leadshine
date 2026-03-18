@@ -8,7 +8,7 @@ import { useToast } from "@/hooks/use-toast";
 import { useCart } from "@/contexts/CartContext";
 import { useWishlist } from "@/contexts/WishlistContext";
 import { LazyImage } from "@/components/LazyImage";
-
+import { useProductImageFilter } from "@/hooks/use-product-image-filter";
 const FeaturedProducts = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
@@ -16,6 +16,7 @@ const FeaturedProducts = () => {
   const { addToCart, isInCart } = useCart();
   const { addToWishlist, isInWishlist } = useWishlist();
   const navigate = useNavigate();
+  const { filterProducts } = useProductImageFilter();
 
   useEffect(() => {
     fetchProducts();
@@ -52,7 +53,7 @@ const FeaturedProducts = () => {
       }
 
       if (error) throw error;
-      setProducts(data || []);
+      setProducts(filterProducts(data || []));
     } catch (error) {
       console.error('Error fetching products:', error);
       toast({
