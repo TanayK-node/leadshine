@@ -16,6 +16,7 @@ const NewArrivals = () => {
   const [products, setProducts] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const { toast } = useToast();
+  const { filterProducts } = useProductImageFilter();
 
   useEffect(() => {
     fetchProducts();
