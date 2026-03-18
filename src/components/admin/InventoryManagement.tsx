@@ -6,6 +6,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Label } from "@/components/ui/label";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -16,18 +18,19 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Search, Package, Trash2, Loader2 } from "lucide-react";
+import { Search, Package, Trash2, Loader2, ImageOff } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import type { Tables } from "@/integrations/supabase/types";
 
-type Product = Tables<"products">;
+type Product = Tables<"products"> & { product_images?: { id: string }[] };
 
 export const InventoryManagement = () => {
   const [products, setProducts] = useState<Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [brandFilter, setBrandFilter] = useState("all");
+  const [imageFilter, setImageFilter] = useState<"all" | "with" | "without">("all");
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [productToDelete, setProductToDelete] = useState<Product | null>(null);
   const [isDeleting, setIsDeleting] = useState(false);
@@ -41,7 +44,7 @@ export const InventoryManagement = () => {
     try {
       const { data, error } = await supabase
         .from('products')
-        .select('*')
+        .select('*, product_images(id)')
         .eq('is_deleted', false)
         .order('Brand Desc');
 
@@ -200,8 +203,13 @@ export const InventoryManagement = () => {
       product["Material Desc"]?.toLowerCase().includes(searchTerm.toLowerCase());
     
     const matchesBrand = brandFilter === "all" || product["Brand Desc"] === brandFilter;
+
+    const hasImages = product.product_images && product.product_images.length > 0;
+    const matchesImage = imageFilter === "all" || 
+      (imageFilter === "with" && hasImages) || 
+      (imageFilter === "without" && !hasImages);
     
-    return matchesSearch && matchesBrand;
+    return matchesSearch && matchesBrand && matchesImage;
   });
 
   const uniqueBrands = Array.from(new Set(products.map(p => p["Brand Desc"]).filter(Boolean)));
@@ -249,7 +257,7 @@ export const InventoryManagement = () => {
               />
             </div>
             
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label className="text-sm font-medium mb-2 block">Filter by Brand</label>
                 <select
@@ -264,6 +272,28 @@ export const InventoryManagement = () => {
                     </option>
                   ))}
                 </select>
+              </div>
+              <div>
+                <label className="text-sm font-medium mb-2 block">Filter by Images</label>
+                <select
+                  value={imageFilter}
+                  onChange={(e) => setImageFilter(e.target.value as "all" | "with" | "without")}
+                  className="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                >
+                  <option value="all">All Products</option>
+                  <option value="with">With Images Only</option>
+                  <option value="without">Without Images Only</option>
+                </select>
+              </div>
+              <div className="flex items-end">
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="image-toggle"
+                    checked={imageFilter === "with"}
+                    onCheckedChange={(checked) => setImageFilter(checked ? "with" : "all")}
+                  />
+                  <Label htmlFor="image-toggle" className="text-sm">Show only with images</Label>
+                </div>
               </div>
             </div>
           </div>
