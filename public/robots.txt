@@ -1,14 +1,17 @@
-User-agent: Googlebot
-Allow: /
-
-User-agent: Bingbot
-Allow: /
-
-User-agent: Twitterbot
-Allow: /
-
-User-agent: facebookexternalhit
-Allow: /
-
 User-agent: *
 Allow: /
+
+# Block private/auth routes
+Disallow: /admin
+Disallow: /auth
+Disallow: /profile
+Disallow: /cart
+Disallow: /checkout
+Disallow: /orders
+Disallow: /wishlist
+
+# Sitemap
+Sitemap: https://leadshine-main.lovable.app/sitemap.xml
+
+# Crawl rate
+Crawl-delay: 1

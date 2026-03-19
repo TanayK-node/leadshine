@@ -113,6 +113,11 @@ const Header = () => {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  // Sanitize input for Supabase ilike patterns
+  const sanitizeSearchTerm = (term: string): string => {
+    return term.replace(/[%_\\]/g, '\\$&');
+  };
+
   const searchProducts = useCallback(async (term: string) => {
     if (term.length < 2) {
       setSearchResults([]);
@@ -121,11 +126,12 @@ const Header = () => {
     }
     setSearchLoading(true);
     try {
+      const safeTerm = sanitizeSearchTerm(term);
       const { data, error } = await supabase
         .from("products")
         .select(`id, "Material Desc", "Brand Desc", "MRP (INR)", discount_price, product_images(image_url)`)
         .eq("is_deleted", false)
-        .or(`"Material Desc".ilike.%${term}%,"Brand Desc".ilike.%${term}%,"Funskool Code".ilike.%${term}%`)
+        .or(`"Material Desc".ilike.%${safeTerm}%,"Brand Desc".ilike.%${safeTerm}%,"Funskool Code".ilike.%${safeTerm}%`)
         .limit(8);
       if (error) throw error;
       setSearchResults(data || []);
