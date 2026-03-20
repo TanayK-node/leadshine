@@ -56,6 +56,7 @@ const ToysAndGames = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Toys & Games" description="Browse fun and entertaining toys and games for all ages at Leadshine Toys." path="/toys-and-games" />
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">

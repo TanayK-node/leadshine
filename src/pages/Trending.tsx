@@ -58,6 +58,7 @@ const Trending = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Trending Toys & Games" description="Shop the most popular and trending toys and games for kids at Leadshine Toys." path="/trending" />
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">

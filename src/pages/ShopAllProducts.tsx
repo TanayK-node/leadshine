@@ -187,6 +187,7 @@ const ShopAllProducts = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Shop All Toys & Games" description="Browse our complete collection of kids toys, educational games, art supplies, and accessories at Leadshine Toys." path="/shop-all" />
       <Header />
       
       <main className="container mx-auto px-4 py-8">

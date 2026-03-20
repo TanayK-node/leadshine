@@ -281,6 +281,7 @@ const Auth = () => {
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/5 via-background to-secondary/5 p-4">
+      <SEO title="Login / Sign Up" description="Sign in or create an account at Leadshine Toys." path="/auth" noindex />
       <Card className="w-full max-w-md">
         <CardHeader>
           <CardTitle className="text-2xl text-center">Welcome to LeadShine Toys</CardTitle>

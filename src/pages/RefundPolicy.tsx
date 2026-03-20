@@ -10,6 +10,7 @@ const RefundPolicy = () => {
 
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="Refund Policy" description="Read Leadshine Toys refund and return policy. Hassle-free returns within policy guidelines." path="/refund-policy" />
       <Header />
       <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
         <h1 className="text-4xl font-bold text-foreground mb-8">Refund Policy</h1>

@@ -49,6 +49,7 @@ const NewArrivals = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="New Arrivals" description="Discover the latest toys and games that just arrived at Leadshine Toys." path="/new-arrivals" />
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">

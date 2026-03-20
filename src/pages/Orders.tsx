@@ -155,6 +155,7 @@ const Orders = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="My Orders" description="Track and manage your orders at Leadshine Toys." path="/orders" noindex />
       <Header />
       
       <main className="container mx-auto px-4 py-8 max-w-6xl">

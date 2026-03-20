@@ -43,6 +43,7 @@ const Wishlist = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="My Wishlist" description="Your saved toys and games at Leadshine Toys." path="/wishlist" noindex />
       <Header />
       
       <main className="container mx-auto px-4 py-8 max-w-6xl">

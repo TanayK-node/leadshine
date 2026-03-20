@@ -186,6 +186,7 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title={product["Material Desc"] || "Product Details"} description={product.description || `Buy ${product["Material Desc"]} at Leadshine Toys. Best prices on kids toys and games.`} path={`/product/${id}`} />
       <Header />
       
       <main className="container mx-auto px-4 py-8 max-w-6xl">

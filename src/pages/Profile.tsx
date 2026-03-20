@@ -138,6 +138,7 @@ const Profile = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="My Profile" description="Manage your Leadshine Toys account and profile." path="/profile" noindex />
       <Header />
       
       <main className="container mx-auto px-4 py-8 max-w-4xl">

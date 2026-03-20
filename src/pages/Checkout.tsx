@@ -451,6 +451,7 @@ const Checkout = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Checkout" description="Complete your purchase at Leadshine Toys." path="/checkout" noindex />
       <Header />
 
       <main className="container mx-auto px-4 py-8 max-w-6xl">

@@ -56,6 +56,7 @@ const ArtAndCrafts = () => {
 
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="Art & Crafts" description="Unleash creativity with art and craft supplies for kids at Leadshine Toys." path="/art-and-crafts" />
       <Header />
       <main className="container mx-auto px-4 py-8">
         <div className="mb-8">
