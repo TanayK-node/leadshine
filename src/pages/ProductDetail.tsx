@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, Link, useNavigate } from "react-router-dom";
+import SEO from "@/components/SEO";
 import { ArrowLeft, ArrowRight, ShoppingCart, Heart, Share2, Package, Truck, Shield, ZoomIn, X, ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";

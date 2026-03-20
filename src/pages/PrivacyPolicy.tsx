@@ -1,9 +1,11 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 
 const PrivacyPolicy = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="Privacy Policy" description="Read Leadshine Toys privacy policy. Learn how we collect, use, and protect your personal information." path="/privacy-policy" />
       <Header />
       <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
         <h1 className="text-4xl font-bold text-foreground mb-8">Privacy Policy</h1>

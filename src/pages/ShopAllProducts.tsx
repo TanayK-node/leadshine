@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { ShoppingCart, Heart, Grid, List } from "lucide-react";
+import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";

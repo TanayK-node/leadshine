@@ -1,9 +1,11 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 
 const TermsOfService = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="Terms of Service" description="Read the terms and conditions for using Leadshine Toys website and services." path="/terms-of-service" />
       <Header />
       <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
         <h1 className="text-4xl font-bold text-foreground mb-8">Terms of Service</h1>

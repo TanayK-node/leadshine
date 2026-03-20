@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { User, Mail, Phone, Package, Calendar } from "lucide-react";
+import SEO from "@/components/SEO";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";

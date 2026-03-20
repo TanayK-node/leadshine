@@ -2,10 +2,12 @@ import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import { Card, CardContent } from "@/components/ui/card";
 import { Users, Award, Globe, Heart } from "lucide-react";
+import SEO from "@/components/SEO";
 
 const AboutUs = () => {
   return (
     <div className="min-h-screen bg-background">
+      <SEO title="About Us" description="Learn about Leadshine Toys – your trusted online destination for quality kids toys, educational games, and creative supplies." path="/about-us" />
       <Header />
       <main className="container mx-auto px-4 py-16">
         {/* Hero Section */}

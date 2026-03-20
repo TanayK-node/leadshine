@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import { Search, Filter, Shirt } from "lucide-react";
+import SEO from "@/components/SEO";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import Header from "@/components/Header";

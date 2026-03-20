@@ -1,9 +1,11 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
+import SEO from "@/components/SEO";
 
 const ShippingPolicy = () => {
   return (
     <div className="min-h-screen bg-background flex flex-col">
+      <SEO title="Shipping Policy" description="Learn about Leadshine Toys shipping policy, delivery times, and shipping charges across India." path="/shipping-policy" />
       <Header />
       <main className="flex-1 container mx-auto px-4 py-12 max-w-4xl">
         <h1 className="text-4xl font-bold text-foreground mb-8">Shipping Policy</h1>
