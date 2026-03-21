@@ -186,7 +186,31 @@ const ProductDetail = () => {
 
   return (
     <div className="min-h-screen bg-background">
-      <SEO title={product["Material Desc"] || "Product Details"} description={product.description || `Buy ${product["Material Desc"]} at Leadshine Toys. Best prices on kids toys and games.`} path={`/product/${id}`} />
+      <SEO
+        title={product["Material Desc"] || "Product Details"}
+        description={product.description || `Buy ${product["Material Desc"]} at Leadshine Toys. Best prices on kids toys and games.`}
+        path={`/product/${id}`}
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "Product",
+          "name": product["Material Desc"] || "",
+          "description": product.description || `${product["Material Desc"]} from ${product["Brand Desc"]}`,
+          "brand": { "@type": "Brand", "name": product["Brand Desc"] || "" },
+          "sku": product["Funskool Code"] || "",
+          "gtin13": product["Barcode (UPC/EAN)"] || undefined,
+          "image": productImages.length > 0 ? productImages[0] : undefined,
+          "offers": {
+            "@type": "Offer",
+            "url": `https://leadshine-main.lovable.app/product/${id}`,
+            "priceCurrency": "INR",
+            "price": product.discount_price || product["MRP (INR)"] || 0,
+            "availability": product.QTY && product.QTY > 0
+              ? "https://schema.org/InStock"
+              : "https://schema.org/OutOfStock",
+            "seller": { "@type": "Organization", "name": "Leadshine Toys" }
+          }
+        }}
+      />
       <Header />
       
       <main className="container mx-auto px-4 py-8 max-w-6xl">

@@ -7,7 +7,22 @@ import SEO from "@/components/SEO";
 const AboutUs = () => {
   return (
     <div className="min-h-screen bg-background">
-      <SEO title="About Us" description="Learn about Leadshine Toys – your trusted online destination for quality kids toys, educational games, and creative supplies." path="/about-us" />
+      <SEO
+        title="About Us"
+        description="Learn about Leadshine Toys – your trusted online destination for quality kids toys, educational games, and creative supplies."
+        path="/about-us"
+        jsonLd={{
+          "@context": "https://schema.org",
+          "@type": "AboutPage",
+          "name": "About Leadshine Toys",
+          "description": "Your trusted partner in providing premium quality toys and educational products for children worldwide.",
+          "mainEntity": {
+            "@type": "Organization",
+            "name": "Leadshine Toys",
+            "url": "https://leadshine-main.lovable.app"
+          }
+        }}
+      />
       <Header />
       <main className="container mx-auto px-4 py-16">
         {/* Hero Section */}
