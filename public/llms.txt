@@ -1,0 +1,35 @@
+# Leadshine Toys
+
+> Your trusted online destination for quality kids toys, educational games, and creative supplies in India.
+
+Leadshine Toys is an e-commerce store specializing in toys, games, art supplies, school essentials, and kids accessories for children of all ages. We offer products from trusted brands with a focus on safety, education, and fun.
+
+## Product Categories
+
+- [Shop All Products](https://leadshine-main.lovable.app/shop-all): Browse our complete catalog of toys and games.
+- [Toys & Games](https://leadshine-main.lovable.app/toys-and-games): Action figures, board games, puzzles, and more.
+- [Art & Crafts](https://leadshine-main.lovable.app/art-and-crafts): Creative supplies for young artists.
+- [School Essentials](https://leadshine-main.lovable.app/school-essentials): Stationery, bags, and supplies for school.
+- [Kids Accessories](https://leadshine-main.lovable.app/kids-accessories): Stylish accessories for children.
+- [New Arrivals](https://leadshine-main.lovable.app/new-arrivals): Latest products added to our store.
+- [Trending](https://leadshine-main.lovable.app/trending): Most popular products right now.
+
+## Key Pages
+
+- [Home](https://leadshine-main.lovable.app/): Main storefront with featured products and categories.
+- [About Us](https://leadshine-main.lovable.app/about-us): Our story, mission, and values.
+- [Privacy Policy](https://leadshine-main.lovable.app/privacy-policy): How we handle your data.
+- [Terms of Service](https://leadshine-main.lovable.app/terms-of-service): Usage terms and conditions.
+- [Refund Policy](https://leadshine-main.lovable.app/refund-policy): Return and refund information.
+- [Shipping Policy](https://leadshine-main.lovable.app/shipping-policy): Delivery options and timelines.
+
+## Key Features
+
+- Free shipping on orders over ₹500
+- Safe and certified products for all age groups
+- Age-based and price-based product filtering
+- Secure checkout with Razorpay payment gateway
+
+## Optional
+
+- [llms-full.txt](https://leadshine-main.lovable.app/llms-full.txt): Extended information for LLMs.

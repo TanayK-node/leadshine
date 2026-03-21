@@ -1,0 +1,79 @@
+# Leadshine Toys — Full Information for LLMs
+
+> Leadshine Toys is an Indian e-commerce platform dedicated to providing premium quality toys, educational products, art supplies, school essentials, and kids accessories for children of all ages.
+
+## About Leadshine Toys
+
+Founded with a passion for childhood development and learning, Leadshine has been dedicated to bringing joy and education to children through carefully curated toys and games. We believe that play is essential for growth, creativity, and imagination.
+
+Over the years, we've built strong partnerships with manufacturers and retailers worldwide, ensuring that quality, safety, and innovation remain at the heart of everything we do.
+
+### Mission
+To empower children's growth and imagination by providing safe, innovative, and educational toys that inspire creativity, learning, and endless fun. We're committed to making quality playtime accessible to every child.
+
+### Core Values
+- **Quality**: Every product meets the highest safety and quality standards.
+- **Passion**: Creating joyful learning experiences for children.
+- **Global Reach**: Serving customers across India with reliable shipping.
+- **Partnership**: Building lasting relationships with clients and suppliers.
+
+## Product Categories
+
+### Toys & Games
+Action figures, board games, puzzles, building blocks, dolls, outdoor toys, and more. Products range from simple toys for toddlers to complex games for older children.
+- URL: https://leadshine-main.lovable.app/toys-and-games
+
+### Art & Crafts
+Drawing kits, paint sets, clay, craft supplies, and creative activity kits designed to spark imagination and artistic skills.
+- URL: https://leadshine-main.lovable.app/art-and-crafts
+
+### School Essentials
+Stationery, notebooks, backpacks, lunch boxes, water bottles, and other school supplies to prepare children for a successful school year.
+- URL: https://leadshine-main.lovable.app/school-essentials
+
+### Kids Accessories
+Watches, sunglasses, bags, jewelry, and other stylish accessories designed for children.
+- URL: https://leadshine-main.lovable.app/kids-accessories
+
+## Shopping Features
+
+- **Shop by Age**: Filter products suitable for specific age groups.
+- **Shop by Price**: Browse products within your budget range.
+- **New Arrivals**: Discover the latest additions to our catalog.
+- **Trending**: See what's popular among our customers.
+- **Wishlist**: Save products for later purchase.
+- **Search**: Find products by name, brand, or category.
+
+## Shipping & Delivery
+
+- Standard Delivery: 3–5 business days.
+- Express Delivery: 1–2 business days.
+- Free shipping on orders over ₹500.
+- Delivery available across India.
+
+## Returns & Refunds
+
+- Easy returns within 30 days of purchase.
+- Product must be in original condition.
+- Refund processed within 5–7 business days.
+
+## Payment
+
+- Secure payment via Razorpay.
+- Supports UPI, credit/debit cards, net banking, and wallets.
+- All transactions are encrypted and secure.
+
+## Contact & Policies
+
+- Privacy Policy: https://leadshine-main.lovable.app/privacy-policy
+- Terms of Service: https://leadshine-main.lovable.app/terms-of-service
+- Refund Policy: https://leadshine-main.lovable.app/refund-policy
+- Shipping Policy: https://leadshine-main.lovable.app/shipping-policy
+
+## Technical Details
+
+- Built as a single-page application using React.
+- Products are stored in a Supabase database.
+- Dynamic product pages at /product/{id}.
+- Category pages available via /category/{slug}.
+- Sitemap available at: https://leadshine-main.lovable.app/sitemap.xml
